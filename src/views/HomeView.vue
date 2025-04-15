@@ -4,7 +4,6 @@
 
       <section class="animate-fade">
 
-
   <!-- Hero Section -->
   <section class="flex flex-col items-center p-8 md:flex-row" >
     <div class="space-y-4 md:w-1/2">
@@ -270,8 +269,28 @@
 
 <script lang="ts" setup>
 import MainLayout from '@/layouts/MainLayout.vue';
+import { ref } from 'vue'
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
 
+const date = ref(new Date())
 
+const disableWeekends = (date) => {
+  // 0 = domingo, 6 = sábado
+  const day = date.getDay()
+  return day === 0 || day === 6
+}
+
+// Función para bloquear todas las fechas excepto hoy
+const disableAllExceptToday = (inputDate) => {
+  const today = new Date()
+
+  // Normalizamos ambas fechas para comparar solo día/mes/año (sin hora)
+  const input = new Date(inputDate.getFullYear(), inputDate.getMonth(), inputDate.getDate())
+  const current = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+
+  return input.getTime() !== current.getTime()
+}
 </script>
 
 <style scoped>

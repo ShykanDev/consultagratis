@@ -23,10 +23,16 @@
             <i id="activo" class="animate-spin fas fa-circle-notch"></i>
             Disponible para prueba gratuita
           </p>
-          <a :href="freeTrialLink" class="px-4 py-2 text-white rounded transition btn-secundario bg-slate-800 hover:bg-slate-700">
-            Crear contacto
-          </a>
+          <div class="flex gap-2 items-center">
+            <a :href="freeTrialLink" class="px-4 py-2 text-white rounded transition btn-secundario bg-slate-800 hover:bg-slate-700">
+              Crear contacto
+            </a>
+            <section class="bg-slate-300">
+
+            </section>
+          </div>
         </div>
+
         <div v-else class="flex flex-col items-start md:flex-row md:justify-between md:items-center">
           <div class="mb-4 md:mb-0">
             <p class="flex gap-2 items-center text-red-600">
@@ -42,6 +48,8 @@
       </div>
     </div>
   </section>
+
+
 
   <!-- Sección de descripción -->
   <section class="py-6 bg-white">
@@ -281,7 +289,9 @@ import { computed } from 'vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 
+import { ref } from 'vue';
 
+const date = ref();
 
 
 // `from` and `to` are expected in minutes.
