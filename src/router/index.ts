@@ -26,7 +26,22 @@ const router = createRouter({
       path:'/horarios',
       name:'schedules',
       component:() => import('../views/SchedulesView.vue'),
-    }
+    },
+    {
+      path:'/ayuda',
+      name:'help',
+      component:() => import('../views/HelpView.vue'),
+    },
+    {
+      path:'/contacto',
+      name:'contact',
+      component:() => import('../views/ContactView.vue'),
+    },
+    {
+      path:'/expertoInfo',
+      name:'expertInfo',
+      component:() => import('../views/ExpertInfoView.vue'),
+    },
   ],
 })
 

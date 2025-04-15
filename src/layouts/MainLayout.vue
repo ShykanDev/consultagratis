@@ -8,12 +8,14 @@
     <div class="hidden gap-4 text-base font-semibold text-gray-800 font-openSans md:flex">
       <RouterLink :to="{ name: 'home' }" class="hover:underline">Inicio</RouterLink>
       <RouterLink :to="{ name: 'experts' }" class="hover:underline">Ver Expertos</RouterLink>
-      <RouterLink :to="{ name: 'home' }" class="hover:underline">Nosotros</RouterLink>
+      <RouterLink :to="{ name: 'about' }" class="hover:underline">Nosotros</RouterLink>
       <RouterLink :to="{ name: 'schedules' }" class="hover:underline">Horarios</RouterLink>
-      <RouterLink :to="{ name: 'home' }" class="hover:underline">Ayuda</RouterLink>
-      <RouterLink :to="{ name: 'home' }" class="text-orange-500 hover:underline">Contacto</RouterLink>
+      <RouterLink :to="{ name: 'help' }" class="hover:underline">Ayuda</RouterLink>
+      <RouterLink :to="{ name: 'contact' }" class="text-orange-500 hover:underline">Contacto</RouterLink>
       <RouterLink :to="{ name: 'home' }" class="text-orange-500 hover:underline">Unirme</RouterLink>
     </div>
+    <div class="gtranslate_wrapper"></div>
+
   </div>
 
 

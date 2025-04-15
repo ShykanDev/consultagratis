@@ -1,7 +1,7 @@
 <template>
    <MainLayout>
     <template #main >
-<section class="animate-fade">
+<section class="animate-fade-up">
 
   <!-- Hero Section -->
   <section class="py-16 text-white bg-gradient-to-r from-blue-500 to-blue-700">

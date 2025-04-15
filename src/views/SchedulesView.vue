@@ -1,7 +1,7 @@
 <template>
    <MainLayout>
     <template #main>
-      <div class="container px-4 py-8 mx-auto">
+      <div class="container px-4 py-8 mx-auto animate-fade-up">
         <div class="flex flex-col gap-8 mb-12 mensajes-horarios lg:flex-row">
             <!-- Sección de Recordatorio -->
             <div class="space-y-6 lg:w-1/2">
