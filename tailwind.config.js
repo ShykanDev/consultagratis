@@ -9,6 +9,7 @@ export default {
 	extend: {
     fontFamily: {
       openSans: ['Open Sans', 'sans-serif'],
+      sarabun:['Sarabun', 'sans-serif']
     },
   },
   },

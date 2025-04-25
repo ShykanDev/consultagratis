@@ -64,14 +64,15 @@
   </div>
   <section v-if="availableTimeData" class="grid grid-cols-7">
     <div v-for="(day, index) in availableTimeData[0].weeklySchedule" :key="index">
-      <DateSquare @click="getDate(day)" :day="day.dayInfo.day" :available-for-appointment="day.dayInfo.availableForAppointment" :available-hours="day.dayInfo.availableHours" :is-day-available="day.dayInfo.isDayAvailable" :hours-taken="day.dayInfo.hoursTaken"/>
+      <DateSquare @click="getUserSelection(day, $event)" :day="day.dayInfo.day" :available-for-appointment="day.dayInfo.isDayAvailable" :available-hours="day.dayInfo.availableHours" :is-day-available="day.dayInfo.isDayAvailable" :hours-taken="day.dayInfo.hoursTaken" :day-selected="day.dayInfo.day"/>
     </div>
   </section>
     </div>
   </section>
 
 <article class="w-full">
-  <button @click="addNewDate" class="px-4 py-2 text-white rounded transition bg-slate-800 btn-general hover:bg-slate-700">Agendar Cita</button>
+  <h3>Agendar cita para el: {{ userDateSelection }} {{ new Date().getDay() }} de {{ newDate }} del {{ new Date().getFullYear() }} a las {{ userHourSelection }} horas</h3>
+  <button  class="px-4 py-2 text-white rounded transition bg-slate-800 btn-general hover:bg-slate-700">Agendar Cita</button>
 </article>
 
   <!-- Sección de descripción -->
@@ -527,7 +528,29 @@ const dataAppointment = reactive({
   hour: ''
 })
 
+const calculateWeekDates = () => {
+  const today = new Date();
+  const weekDates = [];
 
+  // Obtener el día actual (0 = Domingo, 1 = Lunes, etc.)
+  const currentDay = today.getDay();
+
+  // Calcular la fecha para cada día de la semana
+  for (let i = 0; i < 7; i++) {
+    // Calcular la fecha para cada día
+    const date = new Date(today);
+    date.setDate(today.getDate() + (i - currentDay));
+
+    // Agregar la fecha y el día de la semana
+    weekDates.push({
+      day: date.getDate(),
+      dayName: date.toLocaleDateString('es-ES', { weekday: 'long' }),
+      fullDate: date.toISOString().split('T')[0] // Formato YYYY-MM-DD
+    });
+  }
+
+  return weekDates;
+}
 
 //Firebase Stuff
 const db = getFirestore()
@@ -621,6 +644,19 @@ const addNewDate = async () => {
   }
 }
 
+
+
+//Variables to set the user selection
+const userDateSelection  = ref();
+const userHourSelection = ref();
+const newDate = new Date().toLocaleString('es-ES', { month:'long'});
+//Function to set the user selection (hour, date)
+const getUserSelection = (day,val) => {
+    userDateSelection.value = day.dayInfo.day;
+    console.log(userDateSelection.value);
+    userHourSelection.value = val.target.innerText;
+    console.log(userHourSelection.value)
+}
 </script>
 
 <style scoped>
