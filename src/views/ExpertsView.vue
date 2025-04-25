@@ -202,6 +202,58 @@
             </a>
           </div>
         </div>
+        <!-- Card: Abogado -->
+        <div class="flex overflow-hidden flex-col bg-white rounded-xl shadow-md transition duration-300 md:flex-row hover:shadow-xl">
+          <img src="../assets/img/abogado-categoria.jpg" alt="Abogado" class="object-cover md:w-1/3">
+          <div class="p-6 md:w-2/3">
+            <h3 class="mb-2 text-2xl font-semibold">Abogado</h3>
+            <p class="mb-4 text-gray-600">
+              Asesoría legal para resolver tus dudas y resolver tus problemas.
+            </p>
+            <a href="./c-abogado.php" class="font-medium text-blue-600 hover:underline">
+              Consultar
+            </a>
+          </div>
+        </div>
+        <!-- Card: Psicología -->
+        <div class="flex overflow-hidden flex-col bg-white rounded-xl shadow-md transition duration-300 md:flex-row hover:shadow-xl">
+          <img src="../assets/img/psicologia-categoria.jpg" alt="Psicología" class="object-cover md:w-1/3">
+          <div class="p-6 md:w-2/3">
+            <h3 class="mb-2 text-2xl font-semibold">Psicología</h3>
+            <p class="mb-4 text-gray-600">
+              Asesoría psicológica para resolver tus dudas y resolver tus problemas.
+            </p>
+            <a href="./c-psicologia.php" class="font-medium text-blue-600 hover:underline">
+              Consultar
+            </a>
+          </div>
+        </div>
+        <!-- Card: Maestro -->
+        <div class="flex overflow-hidden flex-col bg-white rounded-xl shadow-md transition duration-300 md:flex-row hover:shadow-xl">
+          <img src="../assets/img/maestro-categoria.jpg" alt="Maestro" class="object-cover md:w-1/3">
+          <div class="p-6 md:w-2/3">
+            <h3 class="mb-2 text-2xl font-semibold">Maestro</h3>
+            <p class="mb-4 text-gray-600">
+              Asesoría educativa para resolver tus dudas y resolver tus problemas.
+            </p>
+            <a href="./c-maestro.php" class="font-medium text-blue-600 hover:underline">
+              Consultar
+            </a>
+          </div>
+        </div>
+        <!-- Card: Chef -->
+        <div class="flex overflow-hidden flex-col bg-white rounded-xl shadow-md transition duration-300 md:flex-row hover:shadow-xl">
+          <img src="../assets/img/chef-categoria.jpg" alt="Chef" class="object-cover md:w-1/3">
+          <div class="p-6 md:w-2/3">
+            <h3 class="mb-2 text-2xl font-semibold">Chef</h3>
+            <p class="mb-4 text-gray-600">
+              Asesoría culinaria para resolver tus dudas y resolver tus problemas.
+            </p>
+            <a href="./c-chef.php" class="font-medium text-blue-600 hover:underline">
+              Consultar
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </section>

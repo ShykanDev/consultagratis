@@ -4,6 +4,7 @@
 
       <section class="animate-fade">
 
+
   <!-- Hero Section -->
   <section class="flex flex-col items-center p-8 md:flex-row" >
     <div class="space-y-4 md:w-1/2">

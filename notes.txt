@@ -1,0 +1,12 @@
+Add Interface For Function GetDates in ExpertInfo [--]
+Add Interface For DatesRoot[]
+
+
+  <section class="hidden grid-cols-7 gap-2 p-2">
+    <div v-for="(availableDay, index) in availableTimeData" :key="index" class="flex flex-col gap-2 p-2 font-bold text-center rounded-lg border border-slate-700" :class="{ 'bg-slate-50 text-slate-700 border-green-600 ring-white ring-2': availableDay.weeklySchedule[0].dayInfo.day === dataAppointment.date.day }"><p>{{ availableDay.weeklySchedule[0].dayInfo.day }}</p>
+
+      <article v-for="(availableHour, index) in availableDay.weeklySchedule[0].dayInfo.availableHours" :key="index" class="p-2 font-bold rounded-lg border cursor-pointer text-slate-800 bg-slate-300 border-slate-900 font-openSans a hover:bg-sky-700 hover:text-white" :class="{ 'bg-sky-800 text-white border border-white animate-jump-in': availableHour === dataAppointment.hour && dataAppointment.date.day === availableDay.dayInfo.day, 'bg-slate-900 line-through  cursor-not-allowed hover:bg-slate-950 text-white' : availableDay.dayInfo.hoursTaken.includes(availableHour) }" @click="getDate(availableDay.weeklySchedule[0].dayInfo, availableHour)"><p>{{ availableHour }}</p></article>
+
+
+    </div>
+  </section>

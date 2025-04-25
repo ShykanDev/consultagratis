@@ -44,12 +44,35 @@
           <a :href="hireLink" class="px-4 py-2 text-white rounded transition btn-general bg-slate-800 hover:bg-slate-700">
             Contratar Experto
           </a>
+
         </div>
       </div>
+      <div>
+    <VueDatePicker
+    translate="no"
+      v-model="date"
+      minutes-increment="30"
+      minutes-grid-increment="30"
+      :min-time="{hours: 10, minutes: 0}"
+      :max-time="{hours: 17, minutes: 30}"
+      placeholder="Selecciona una hora"
+      :time-picker-inline="true"
+      :is24="false"
+      :disabled-dates="disableAllExceptToday"
+    />
+
+  </div>
+  <section v-if="availableTimeData" class="grid grid-cols-7">
+    <div v-for="(day, index) in availableTimeData[0].weeklySchedule" :key="index">
+      <DateSquare @click="getDate(day)" :day="day.dayInfo.day" :available-for-appointment="day.dayInfo.availableForAppointment" :available-hours="day.dayInfo.availableHours" :is-day-available="day.dayInfo.isDayAvailable" :hours-taken="day.dayInfo.hoursTaken"/>
+    </div>
+  </section>
     </div>
   </section>
 
-
+<article class="w-full">
+  <button @click="addNewDate" class="px-4 py-2 text-white rounded transition bg-slate-800 btn-general hover:bg-slate-700">Agendar Cita</button>
+</article>
 
   <!-- Sección de descripción -->
   <section class="py-6 bg-white">
@@ -259,15 +282,16 @@
             </section>
             <section v-else>
               <div class="text-center">
-                <h2 class="mb-2 text-xl font-bold text-red-600">
-                  El horario del experto es de {{  }}:00am - {{  }}:00pm
+                <h2 class="mb-2 text-xl font-bold text-slate-600">
+                  El horario de contratación del experto es de 10:00am - 5:30pm
                 </h2>
                 <h3 class="mb-4 text-gray-700">
                   Si desea contratar el experto o realizar una consulta sin ocupar los 15 minutos de prueba, puede agendar una cita
                 </h3>
-                <a href="" class="px-6 py-2 text-white rounded transition bg-slate-800 hover:bg-slate-700">
-                  Agendar Citas
-                </a>
+                <!--Disclaimer -->
+                <p class="text-sm italic text-gray-700 text-end">
+                  *Los expertos pueden tener un horario diferente al de la plataforma
+                </p>
               </div>
             </section>
 
@@ -285,30 +309,14 @@
 
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 
 import { ref } from 'vue';
+import type { IDateRoot } from '@/interfaces/IDateRoot';
 
-const date = ref();
 
-
-// `from` and `to` are expected in minutes.
-const dailyHours = { from: 9 * 60, to: 18 * 60, class: 'business-hours' }
-
-// In your component's data, special hours from Monday to Friday.
-// Note that you can provide an array of multiple blocks for the same day.
-const specialHours = {
-  1: dailyHours,
-  2: dailyHours,
-  3: [
-    { from: 9 * 60, to: 12 * 60, class: 'business-hours' },
-    { from: 14 * 60, to: 18 * 60, class: 'business-hours' }
-  ],
-  4: dailyHours,
-  5: dailyHours
-}
 const props = defineProps({
   title: {
     type: String,
@@ -423,6 +431,196 @@ const isAvailable = computed(() => {
 
 // Computed para el ícono del área
 const areaIcon = computed(() => 'fas fa-dollar-sign');
+
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
+import { addDoc, collection, getDocs, getFirestore } from 'firebase/firestore';
+import DateSquare from '@/components/ExpertoInfoView/DateSquare.vue';
+
+
+const date = ref(new Date())
+
+
+// Función para bloquear todas las fechas excepto hoy
+const disableAllExceptToday = (inputDate: Date) => {
+  const today = new Date()
+
+  // Normalizamos ambas fechas para comparar solo día/mes/año (sin hora)
+  const input = new Date(inputDate.getFullYear(), inputDate.getMonth(), inputDate.getDate())
+  const current = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+
+  return input.getTime() !== current.getTime()
+}
+
+const availableTimeDataExample = [{
+    availableForAppointment: false,
+    weeklySchedule:[
+      {
+        dayInfo:{
+          isDayAvailable: false,
+          day: 'Lunes',
+          availableHours: ['10:30', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['10:00', '11:00']
+        }
+      },
+      {
+        dayInfo: {
+          isDayAvailable: false,
+          day: 'Martes',
+          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['10:00', '11:00']
+        }
+      },
+      {
+        dayInfo: {
+          isDayAvailable: false,
+          day: 'Miércoles',
+          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['14:30', '12:00']
+        }
+      },
+      {
+        dayInfo: {
+          isDayAvailable: false,
+          day: 'Jueves',
+          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['10:30', '11:00']
+        }
+      },
+      {
+        dayInfo: {
+          isDayAvailable: false,
+          day: 'Viernes',
+          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['10:30', '11:00']
+        }
+      },
+      {
+        dayInfo: {
+          isDayAvailable: false,
+          day: 'Sábado',
+          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['10:30', '11:00']
+        }
+      },
+      {
+        dayInfo: {
+          isDayAvailable: false,
+          day: 'Domingo',
+          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['10:00', '11:00']
+        }
+      }
+    ],
+
+}]
+
+const availableTimeData =ref<IDateRoot[]>()
+//Function to select the user date and hour
+
+const getDate = (day) => {
+console.log(day);
+
+}
+const dataAppointment = reactive({
+  date: {},
+  hour: ''
+})
+
+
+
+//Firebase Stuff
+const db = getFirestore()
+const collectionDates = collection(db,  `Dates`)
+//TODO:Add Interface to it
+//Function to get the dates from Firebase
+const getDates = async () => {
+  availableTimeData.value = [];
+  try {
+    const querySnapshot = await getDocs(collectionDates);
+    availableTimeData.value = [(querySnapshot.docs[0].data() as IDateRoot)]
+  } catch (error) {
+    console.error('Error fetching dates:', error);
+  }
+}
+
+onMounted( () => {
+  getDates();
+})
+
+const addNewDate = async () => {
+  try {
+    addDoc(collectionDates, {
+    availableForAppointment: false,
+    weeklySchedule:[
+      {
+        dayInfo:{
+          isDayAvailable: false,
+          day: 'Lunes',
+          availableHours: ['10:30', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['10:00', '11:00']
+        }
+      },
+      {
+        dayInfo: {
+          isDayAvailable: false,
+          day: 'Martes',
+          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['10:00', '11:00']
+        }
+      },
+      {
+        dayInfo: {
+          isDayAvailable: false,
+          day: 'Miércoles',
+          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['14:30', '12:00']
+        }
+      },
+      {
+        dayInfo: {
+          isDayAvailable: false,
+          day: 'Jueves',
+          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['10:30', '11:00']
+        }
+      },
+      {
+        dayInfo: {
+          isDayAvailable: false,
+          day: 'Viernes',
+          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['10:30', '11:00']
+        }
+      },
+      {
+        dayInfo: {
+          isDayAvailable: false,
+          day: 'Sábado',
+          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['10:30', '11:00']
+        }
+      },
+      {
+        dayInfo: {
+          isDayAvailable: false,
+          day: 'Domingo',
+          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+          hoursTaken: ['10:00', '11:00']
+        }
+      }
+    ],
+
+}
+
+
+    )
+  } catch (error) {
+    console.log('Error al enviar el documento ', error);
+
+  }
+}
+
 </script>
 
 <style scoped>
