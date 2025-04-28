@@ -62,17 +62,44 @@
     />
 
   </div>
-  <section v-if="availableTimeData" class="grid grid-cols-7">
-    <div v-for="(day, index) in availableTimeData[0].weeklySchedule" :key="index">
-      <DateSquare @click="getUserSelection(day, $event)" :day="day.dayInfo.day" :available-for-appointment="day.dayInfo.isDayAvailable" :available-hours="day.dayInfo.availableHours" :is-day-available="day.dayInfo.isDayAvailable" :hours-taken="day.dayInfo.hoursTaken" :day-selected="day.dayInfo.day"/>
-    </div>
-  </section>
+  <!-- Loading Animation -->
+   <section v-if="isLoading" class="flex justify-center items-center">
+    <AnimationLoadingCircle />
+   </section>
+  <section v-if="availableTimeData" class="grid grid-cols-7 py-3">
+  <div v-for="(day, index) in availableTimeData[0].weeklySchedule" :key="index" class="animate-fade-up" :style="{ animationDelay: `${index * 100}ms` }">
+    <DateSquare
+      @click="getUserSelection(day, $event)"
+      :day-info="day.dayInfo"
+      :available-for-appointment="day.dayInfo.isDayAvailable"
+      :available-hours="day.dayInfo.availableHours"
+      :hours-taken="day.dayInfo.hoursTaken"
+      :selected-day="userDateSelection"
+      :selected-hour="userHourSelection"
+
+    />
+  </div>
+</section>
     </div>
   </section>
 
-<article class="w-full">
-  <h3>Agendar cita para el: {{ userDateSelection }} {{ new Date().getDay() }} de {{ newDate }} del {{ new Date().getFullYear() }} a las {{ userHourSelection }} horas</h3>
-  <button  class="px-4 py-2 text-white rounded transition bg-slate-800 btn-general hover:bg-slate-700">Agendar Cita</button>
+  <article class="px-4 w-full">
+  <div v-if="userDateSelection && userHourSelection" class="flex flex-col gap-4 justify-between items-center p-6 rounded-2xl shadow-lg animate-fade-up md:flex-row bg-slate-800">
+    <h3 class="flex gap-3 items-center text-lg font-semibold text-white md:text-2xl">
+      <v-icon name="bi-calendar2-week-fill" scale="1.5" class="text-white" />
+      <span class="flex-1">
+        Agendar cita para el
+        <span class="text-slate-100"><span class="px-1 py-1 italic font-black bg-white rounded-md shadow-sm text-slate-900 animate-fade" :key="userDateSelection">{{ userDateSelection }} {{ userDayNumber }} </span> de {{ userMonth }} del {{ new Date().getFullYear() }}</span>
+
+        a las
+        <span class="inline-block px-2 py-1 mx-1 font-black italic bg-white rounded-md shadow-sm text-slate-900 font-sarabun animate-fade animate-delay-[350ms]" :key="userHourSelection">{{ userHourSelection }}</span> horas
+      </span>
+    </h3>
+    <button class="flex items-center px-4 py-2 font-semibold bg-white rounded-xl shadow-md transition text-slate-800 hover:bg-slate-100">
+      <v-icon name="md-addalert" scale="1.5" class="text-slate-800" />
+      Agendar Cita
+    </button>
+  </div>
 </article>
 
   <!-- Sección de descripción -->
@@ -435,8 +462,9 @@ const areaIcon = computed(() => 'fas fa-dollar-sign');
 
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import { addDoc, collection, getDocs, getFirestore } from 'firebase/firestore';
+import { addDoc, collection, getDocs, getFirestore, updateDoc } from 'firebase/firestore';
 import DateSquare from '@/components/ExpertoInfoView/DateSquare.vue';
+import AnimationLoadingCircle from '@/animations/AnimationLoadingCircle.vue';
 
 
 const date = ref(new Date())
@@ -556,17 +584,54 @@ const calculateWeekDates = () => {
 const db = getFirestore()
 const collectionDates = collection(db,  `Dates`)
 //TODO:Add Interface to it
+
+const isLoading = ref(true)
 //Function to get the dates from Firebase
 const getDates = async () => {
+  isLoading.value = true
   availableTimeData.value = [];
   try {
     const querySnapshot = await getDocs(collectionDates);
-    availableTimeData.value = [(querySnapshot.docs[0].data() as IDateRoot)]
+    const data = querySnapshot.docs[0].data() as IDateRoot;
+
+    const today = new Date();
+    const currentDay = today.getDay();
+
+    const updatedSchedule = data.weeklySchedule.map((day) => {
+      const date = new Date(today);
+      const targetDay = day.dayInfo.day;
+      const daysDiff = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'].indexOf(targetDay) - currentDay;
+
+      const daysToAdd = daysDiff >= 0 ? daysDiff : 7 + daysDiff;
+      date.setDate(today.getDate() + daysToAdd);
+
+      // Actualizar el mes en el formato correcto
+      const month = date.toLocaleString('es-ES', { month: 'long' });
+
+      return {
+        dayInfo: {
+          ...day.dayInfo,
+          dayNumber: date.getDate(),
+          fullDate: date.toISOString().split('T')[0],
+          monthName: month
+        }
+      };
+
+    });
+
+    updatedSchedule.sort((a, b) => {
+      const dateA = new Date(a.dayInfo.fullDate);
+      const dateB = new Date(b.dayInfo.fullDate);
+      return dateA.getTime() - dateB.getTime();
+    });
+
+    availableTimeData.value = [{ ...data, weeklySchedule: updatedSchedule }];
+    isLoading.value = false
   } catch (error) {
     console.error('Error fetching dates:', error);
+    isLoading.value = false
   }
 }
-
 onMounted( () => {
   getDates();
 })
@@ -649,13 +714,20 @@ const addNewDate = async () => {
 //Variables to set the user selection
 const userDateSelection  = ref();
 const userHourSelection = ref();
+const userDayNumber = ref();
+const userMonth = ref();
 const newDate = new Date().toLocaleString('es-ES', { month:'long'});
 //Function to set the user selection (hour, date)
 const getUserSelection = (day,val) => {
+  //Verification if user clicks in a different place that is not the permitted area
+    if(val.target.id  != 'hourArea') return;
     userDateSelection.value = day.dayInfo.day;
     console.log(userDateSelection.value);
     userHourSelection.value = val.target.innerText;
     console.log(userHourSelection.value)
+    userDayNumber.value = day.dayInfo.dayNumber;
+    console.log(val.target.id);
+    userMonth.value = day.dayInfo.monthName;
 }
 </script>
 

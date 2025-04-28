@@ -6,8 +6,8 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { OhVueIcon, addIcons } from "oh-vue-icons";
-import { FaFlag, RiZhihuFill } from "oh-vue-icons/icons";
-addIcons(FaFlag, RiZhihuFill);
+import { FaFlag, RiZhihuFill, BiCalendar2WeekFill,MdAddalert } from "oh-vue-icons/icons";
+addIcons(FaFlag, RiZhihuFill, BiCalendar2WeekFill,MdAddalert);
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
