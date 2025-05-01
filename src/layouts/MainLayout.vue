@@ -12,7 +12,7 @@
       <RouterLink :to="{ name: 'schedules' }" class="hover:underline">Horarios</RouterLink>
       <RouterLink :to="{ name: 'help' }" class="hover:underline">Ayuda</RouterLink>
       <RouterLink :to="{ name: 'contact' }" class="text-orange-500 hover:underline">Contacto</RouterLink>
-      <RouterLink :to="{ name: 'home' }" class="text-orange-500 hover:underline">Unirme</RouterLink>
+      <RouterLink :to="{ name: 'register' }" class="text-orange-500 hover:underline">Unirme</RouterLink>
     </div>
     <div class="gtranslate_wrapper"></div>
 

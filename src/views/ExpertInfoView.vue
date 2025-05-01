@@ -48,28 +48,15 @@
         </div>
       </div>
       <div>
-    <VueDatePicker
-    translate="no"
-      v-model="date"
-      minutes-increment="30"
-      minutes-grid-increment="30"
-      :min-time="{hours: 10, minutes: 0}"
-      :max-time="{hours: 17, minutes: 30}"
-      placeholder="Selecciona una hora"
-      :time-picker-inline="true"
-      :is24="false"
-      :disabled-dates="disableAllExceptToday"
-    />
-
   </div>
   <!-- Loading Animation -->
    <section v-if="isLoading" class="flex justify-center items-center">
     <AnimationLoadingCircle />
    </section>
-  <section v-if="availableTimeData" class="grid grid-cols-7 py-3">
+  <section v-if="availableTimeData && availableTimeData.length > 0" class="grid grid-cols-7 py-3">
   <div v-for="(day, index) in availableTimeData[0].weeklySchedule" :key="index" class="animate-fade-up" :style="{ animationDelay: `${index * 100}ms` }">
     <DateSquare
-      @click="getUserSelection(day, $event)"
+      @click="getUserSelection(day, $event, index)"
       :day-info="day.dayInfo"
       :available-for-appointment="day.dayInfo.isDayAvailable"
       :available-hours="day.dayInfo.availableHours"
@@ -95,7 +82,7 @@
         <span class="inline-block px-2 py-1 mx-1 font-black italic bg-white rounded-md shadow-sm text-slate-900 font-sarabun animate-fade animate-delay-[350ms]" :key="userHourSelection">{{ userHourSelection }}</span> horas
       </span>
     </h3>
-    <button class="flex items-center px-4 py-2 font-semibold bg-white rounded-xl shadow-md transition text-slate-800 hover:bg-slate-100">
+    <button @click="scheduleAppointment(userIndexSelection)" class="flex items-center px-4 py-2 font-semibold bg-white rounded-xl shadow-md transition text-slate-800 hover:bg-slate-100">
       <v-icon name="md-addalert" scale="1.5" class="text-slate-800" />
       Agendar Cita
     </button>
@@ -427,6 +414,10 @@ const props = defineProps({
   defaultMonth: {
     type: String,
     default: 'Noviembre'
+  },
+  dataInfo: {
+    type: Object,
+    required: true
   }
 });
 
@@ -462,7 +453,7 @@ const areaIcon = computed(() => 'fas fa-dollar-sign');
 
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import { addDoc, collection, getDocs, getFirestore, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, getFirestore, updateDoc } from 'firebase/firestore';
 import DateSquare from '@/components/ExpertoInfoView/DateSquare.vue';
 import AnimationLoadingCircle from '@/animations/AnimationLoadingCircle.vue';
 
@@ -547,39 +538,6 @@ const availableTimeDataExample = [{
 const availableTimeData =ref<IDateRoot[]>()
 //Function to select the user date and hour
 
-const getDate = (day) => {
-console.log(day);
-
-}
-const dataAppointment = reactive({
-  date: {},
-  hour: ''
-})
-
-const calculateWeekDates = () => {
-  const today = new Date();
-  const weekDates = [];
-
-  // Obtener el día actual (0 = Domingo, 1 = Lunes, etc.)
-  const currentDay = today.getDay();
-
-  // Calcular la fecha para cada día de la semana
-  for (let i = 0; i < 7; i++) {
-    // Calcular la fecha para cada día
-    const date = new Date(today);
-    date.setDate(today.getDate() + (i - currentDay));
-
-    // Agregar la fecha y el día de la semana
-    weekDates.push({
-      day: date.getDate(),
-      dayName: date.toLocaleDateString('es-ES', { weekday: 'long' }),
-      fullDate: date.toISOString().split('T')[0] // Formato YYYY-MM-DD
-    });
-  }
-
-  return weekDates;
-}
-
 //Firebase Stuff
 const db = getFirestore()
 const collectionDates = collection(db,  `Dates`)
@@ -592,7 +550,13 @@ const getDates = async () => {
   availableTimeData.value = [];
   try {
     const querySnapshot = await getDocs(collectionDates);
-    const data = querySnapshot.docs[0].data() as IDateRoot;
+    const doc = querySnapshot.docs[0];
+    if (!doc) throw new Error('No se encontró ningún documento en collectionDates');
+
+    const data = doc.data() as IDateRoot;
+  console.log(data);
+
+    if (!Array.isArray(data.weeklySchedule)) throw new Error('weeklySchedule no es un array');
 
     const today = new Date();
     const currentDay = today.getDay();
@@ -605,7 +569,6 @@ const getDates = async () => {
       const daysToAdd = daysDiff >= 0 ? daysDiff : 7 + daysDiff;
       date.setDate(today.getDate() + daysToAdd);
 
-      // Actualizar el mes en el formato correcto
       const month = date.toLocaleString('es-ES', { month: 'long' });
 
       return {
@@ -616,7 +579,6 @@ const getDates = async () => {
           monthName: month
         }
       };
-
     });
 
     updatedSchedule.sort((a, b) => {
@@ -632,6 +594,7 @@ const getDates = async () => {
     isLoading.value = false
   }
 }
+
 onMounted( () => {
   getDates();
 })
@@ -709,16 +672,24 @@ const addNewDate = async () => {
   }
 }
 
+onMounted(() => {
 
+})
 
 //Variables to set the user selection
 const userDateSelection  = ref();
 const userHourSelection = ref();
+const userIndexSelection = ref();
 const userDayNumber = ref();
 const userMonth = ref();
 const newDate = new Date().toLocaleString('es-ES', { month:'long'});
 //Function to set the user selection (hour, date)
-const getUserSelection = (day,val) => {
+const getUserSelection = (day,val,index) => {
+
+  userIndexSelection.value = index;
+
+  //Set the value as prop
+   availableHours.value = day.dayInfo.hoursTaken;
   //Verification if user clicks in a different place that is not the permitted area
     if(val.target.id  != 'hourArea') return;
     userDateSelection.value = day.dayInfo.day;
@@ -729,6 +700,66 @@ const getUserSelection = (day,val) => {
     console.log(val.target.id);
     userMonth.value = day.dayInfo.monthName;
 }
+
+const resetUserSelection = () => {
+  userDateSelection.value = '';
+  userHourSelection.value = '';
+  userDayNumber.value = '';
+  userMonth.value = '';
+}
+
+
+//Validate user has selected a valid date that is not taken (to see if the hour is available and not as been already taken in the availableHours array)
+
+const validateUserSelection = (data) => {
+  if(!userDateSelection.value || !userHourSelection.value) {
+    alert('Por favor, selecciona una fecha y hora válida');
+    return false;
+  }
+  if(data.hoursTaken.includes(userHourSelection.value)) {
+    alert('Por favor, selecciona una hora disponible');
+    return false;
+  }
+  alert('Fecha y hora válida');
+  return true;
+}
+const availableHours = ref([]);
+
+const arrayToUpdate = ref();
+const scheduleAppointment = async(index:number) => {
+const weeklyScheduleUpdated = JSON.parse(JSON.stringify(availableTimeData.value[0]))
+//Verifying the hour is not already taken
+if(weeklyScheduleUpdated.weeklySchedule[index].dayInfo.hoursTaken.includes(userHourSelection.value)) {
+  alert('Por favor, selecciona una hora disponible');
+  return;
+}
+console.log(weeklyScheduleUpdated); //Now push the hour to the hoursTaken array
+
+if(weeklyScheduleUpdated.weeklySchedule[index].dayInfo.hoursTaken.includes(userHourSelection.value)) {
+  alert('Por favor, selecciona una hora disponible');
+  return;
+}
+weeklyScheduleUpdated.weeklySchedule[index].dayInfo.hoursTaken.push(userHourSelection.value);
+
+console.log(weeklyScheduleUpdated);
+
+  try {
+    //Vaidation goes here
+    // Actualizar Firebase
+  arrayToUpdate.value = weeklyScheduleUpdated;
+
+await updateDoc(doc(db, 'Dates/HS3S8Tsu6m7ce3DNtgzi'), {
+  weeklySchedule: arrayToUpdate.value.weeklySchedule
+});
+
+getDates();
+ console.log('Appointment scheduled successfully');
+
+  } catch (error) {
+      console.log(error);
+  }
+}
+
 </script>
 
 <style scoped>
