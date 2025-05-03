@@ -453,7 +453,7 @@ const areaIcon = computed(() => 'fas fa-dollar-sign');
 
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import { addDoc, collection, doc, getDocs, getFirestore, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, getFirestore, Timestamp, updateDoc } from 'firebase/firestore';
 import DateSquare from '@/components/ExpertoInfoView/DateSquare.vue';
 import AnimationLoadingCircle from '@/animations/AnimationLoadingCircle.vue';
 
@@ -599,9 +599,8 @@ onMounted( () => {
   getDates();
 })
 
-const addNewDate = async () => {
-  try {
-    addDoc(collectionDates, {
+/*
+addDoc(collectionMockExperts, {
     availableForAppointment: false,
     weeklySchedule:[
       {
@@ -665,15 +664,32 @@ const addNewDate = async () => {
 }
 
 
-    )
+    ),
+*/
+const collectionMockExperts = collection(db, 'Experts')
+const addNewDate = async () => {
+  try {
+    addDoc(collectionMockExperts,{
+      name: 'Luis Ángel',
+      email: 'luis.angel@consultagratis.com',
+      age: 25,
+      active: true,
+      createdAt: Timestamp.now(),
+      userId:'123abc',
+    })
+    //Set the document id the same as the userId
+    const docRef = doc(collectionMockExperts);
+    updateDoc(docRef, { id: '123abc' });
+    console.log('Usuario agregado correctamente');
+
   } catch (error) {
-    console.log('Error al enviar el documento ', error);
+    console.log('Error al agregar el usuario ', error);
 
   }
 }
 
 onMounted(() => {
-
+  addNewDate()
 })
 
 //Variables to set the user selection
