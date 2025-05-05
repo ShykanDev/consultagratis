@@ -20,38 +20,43 @@ const router = createRouter({
     {
       path: '/expertos',
       name: 'experts',
-      component:() => import('../views/ExpertsView.vue'),
+      component: () => import('../views/ExpertsView.vue'),
     },
     {
-      path:'/horarios',
-      name:'schedules',
-      component:() => import('../views/SchedulesView.vue'),
+      path: '/horarios',
+      name: 'schedules',
+      component: () => import('../views/SchedulesView.vue'),
     },
     {
-      path:'/ayuda',
-      name:'help',
-      component:() => import('../views/HelpView.vue'),
+      path: '/ayuda',
+      name: 'help',
+      component: () => import('../views/HelpView.vue'),
     },
     {
-      path:'/contacto',
-      name:'contact',
-      component:() => import('../views/ContactView.vue'),
+      path: '/contacto',
+      name: 'contact',
+      component: () => import('../views/ContactView.vue'),
     },
     {
-      path:'/expertoInfo',
-      name:'expertInfo',
-      component:() => import('../views/ExpertInfoView.vue'),
+      path: '/expertoInfo',
+      name: 'expertInfo',
+      component: () => import('../views/ExpertInfoView.vue'),
     },
     {
-      path:'/register',
-      name:'register',
-      component:() => import('../views/RegisterView.vue'),
+      path: '/register',
+      name: 'register',
+      component: () => import('../views/RegisterView.vue'),
     },
     {
-      path:'/login',
-      name:'login',
-      component:() => import('../views/LoginView.vue'),
-    }
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue'),
+    },
+    {
+      path: '/tsfb',
+      name: 'testingFirebase',
+      component: () => import('../views/TestingFirebase.vue'),
+    },
   ],
 })
 
