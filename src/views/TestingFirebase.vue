@@ -27,28 +27,30 @@
                     <!-- Campos de texto -->
                     <div class="md:col-span-5">
                       <label for="full_name">Nombre completo</label>
-                      <input type="text" id="full_name" class="input-style" />
+                      <input type="text" id="full_name" v-model="formData.fullName" class="input-style" />
                     </div>
 
                     <div class="md:col-span-5">
                       <label for="email"> Correo electrónico</label>
-                      <input type="email" id="email" class="input-style" placeholder="email@domain.com" />
+                      <input type="email" id="email" v-model="formData.email" class="input-style"
+                        placeholder="email@domain.com" />
                     </div>
 
                     <div class="md:col-span-3">
                       <label for="address">Dirección</label>
-                      <input type="text" id="address" class="input-style" placeholder="Dirección" />
+                      <input type="text" id="address" v-model="formData.address" class="input-style"
+                        placeholder="Dirección" />
                     </div>
 
-                    <div class="md:col-span-2">
+                    <div class="opacity-0 md:col-span-2">
                       <label for="city">Ciudad</label>
-                      <input type="text" id="city" class="input-style" placeholder="Ciudad" />
+                      <input type="text" id="city" v-model="formData.city" class="input-style" placeholder="Ciudad" />
                     </div>
 
                     <div class="md:col-span-2">
                       <label for="country">País</label>
                       <div class="input-icon-group">
-                        <select name="country" id="country" class="input-inner">
+                        <select name="country" id="country" v-model="formData.country" class="input-inner">
                           <option value="">Seleccione un país</option>
                           <option v-for="country in countries" :key="country" :value="country"
                             :selected="country === 'México'">
@@ -62,7 +64,7 @@
                     <div class="md:col-span-2">
                       <label for="state">Estado / provincia</label>
                       <div class="input-icon-group">
-                        <select name="state" id="state" class="input-inner">
+                        <select name="state" id="state" v-model="formData.state" class="input-inner">
                           <option value="">Seleccione un estado</option>
                           <option v-for="state in statesOfMexico" :key="state" :value="state"
                             :selected="state === 'Ciudad de México'">
@@ -90,8 +92,8 @@
                         <label for="especialidad" class="block font-medium text-blue-700">Especialidad</label>
                         <div class="input-icon-group">
                           <v-icon name="fa-briefcase" class="mr-2 text-blue-500" />
-                          <input type="text" id="especialidad" placeholder="Ej. Psicología, Derecho"
-                            class="input-inner" />
+                          <input type="text" v-model="formData.speciality" id="especialidad"
+                            placeholder="Ej. Psicología, Derecho" class="input-inner" />
                         </div>
                       </div>
 
@@ -100,7 +102,8 @@
                         <label for="experiencia" class="block font-medium text-blue-700">Años de experiencia</label>
                         <div class="input-icon-group">
                           <v-icon name="fa-briefcase" class="mr-2 text-blue-500" />
-                          <input type="number" id="experiencia" placeholder="Ej. 5" class="input-inner" min="0" />
+                          <input type="number" v-model="formData.experienceYears" id="experiencia" placeholder="Ej. 5"
+                            class="input-inner" min="0" />
                         </div>
                       </div>
 
@@ -109,7 +112,8 @@
                         <label for="cedula" class="block font-medium text-blue-700">Cédula profesional</label>
                         <div class="input-icon-group">
                           <v-icon name="fa-id-card" class="mr-2 text-blue-500" />
-                          <input type="text" id="cedula" placeholder="Ej. 1234567" class="input-inner" />
+                          <input type="text" v-model="formData.professionalId" id="cedula" placeholder="Ej. 1234567"
+                            class="input-inner" />
                         </div>
                       </div>
 
@@ -118,7 +122,8 @@
                         <label for="telefono" class="block font-medium text-blue-700">Teléfono de contacto</label>
                         <div class="input-icon-group">
                           <v-icon name="fa-phone-alt" class="mr-2 text-blue-500" />
-                          <input type="tel" id="telefono" placeholder="Ej. +52 55 1234 5678" class="input-inner" />
+                          <input type="tel" v-model="formData.phone" id="telefono" placeholder="Ej. +52 55 1234 5678"
+                            class="input-inner" />
                         </div>
                       </div>
 
@@ -127,7 +132,8 @@
                         <label for="mensaje" class="block font-medium text-blue-700">Solicitud detallada</label>
                         <div class="flex items-start px-3 py-2 bg-white rounded border border-blue-200">
                           <v-icon name="fa-pen-fancy" class="mt-1 mr-2 text-blue-500" />
-                          <textarea id="mensaje" rows="4" class="w-full text-blue-900 outline-none"
+                          <textarea id="mensaje" v-model="formData.message" rows="4"
+                            class="w-full text-blue-900 outline-none min-h-[250px]"
                             placeholder="Cuéntanos más sobre ti, por qué deseas unirte, etc."></textarea>
                         </div>
                       </div>
@@ -136,7 +142,8 @@
 
                     <div class="md:col-span-5">
                       <div class="inline-flex items-center">
-                        <input type="checkbox" id="billing_same" class="text-blue-500 form-checkbox" />
+                        <input type="checkbox" id="billing_same" v-model="formData.agree"
+                          class="text-blue-500 form-checkbox" />
                         <label for="billing_same" class="ml-2">Declaro haber ingresado datos veraces y acepto que
                           serán utilizados para la contratación de servicios.</label>
                       </div>
@@ -144,7 +151,7 @@
 
 
                     <div class="text-right md:col-span-5">
-                      <button
+                      <button @click="sendMessage"
                         class="px-6 py-2 font-bold text-white bg-blue-500 rounded-xl shadow-md transition-all hover:bg-blue-700">
                         <v-icon name="fa-paper-plane" class="mr-2" />
                         Enviar
@@ -160,6 +167,11 @@
         </div>
 
 
+
+        <Notivue v-slot="item">
+          <Notification :item="item" />
+        </Notivue>
+
       </div>
 
 
@@ -170,39 +182,18 @@
 
 <script lang="ts" setup>
 import MainLayout from '@/layouts/MainLayout.vue';
-import { addDoc, collection, getDocs, getFirestore, query, where } from 'firebase/firestore';
-import { ref } from 'vue';
+import emailjs from '@emailjs/browser';
+import { addDoc, collection, getDocs, getFirestore, query, Timestamp, where } from 'firebase/firestore';
+import { reactive, ref } from 'vue';
+import { Notivue, Notification, push } from 'notivue'
 const db = getFirestore();
 const collectionExperts = collection(db, `Experts`);
+emailjs.init('M7V0jkjIzlUXFRh8X')
+
+
+
 //Adding Expert to Firebase
-const addExpert = () => {
-  try {
-    addDoc(collectionExperts, {
-      name: 'Alejandro',
-      userUid: '123',
-      active: true,
-      suspended: false,
-    })
 
-    console.log('user added successfully');
-
-  } catch (error) {
-    console.log(error);
-
-  }
-}
-
-const getInfo = async () => {
-  const queryGetUser = query(collectionExperts, where('userUid', '==', '123'));
-  const querySnapshot = await getDocs(queryGetUser);
-  if (querySnapshot.empty) {
-    console.log('Usuario no encontrado');
-    return;
-  }
-  querySnapshot.forEach(doc => {
-    console.log(doc.data());
-  })
-}
 
 const countries = ref([
   "Argentina",
@@ -268,15 +259,120 @@ const statesOfMexico = [
 ];
 
 
+const formData = reactive({
+  fullName: '',
+  email: '',
+  address: '',
+  city: 'Ciudad de México',
+  country: '',
+  state: '',
+  userUid: '',
+  active: false,
+  suspended: false,
+  createdAt: Timestamp.now(),
+  speciality: '',
+  experienceYears: 0,
+  professionalId: '',
+  awaitingApproval: false,
+  approved: false,
+  phone: '',
+  message: '',
+  agree: false,
+})
+
+const sendEmails = () => {
+  emailjs.send(
+    'service_yr3zwrb',
+    'template_kun292z',
+    {
+      fullName: formData.fullName,
+      email: formData.email,
+      address: formData.address,
+      city: formData.city,
+      country: formData.country,
+      state: formData.state,
+      userUid: formData.userUid,
+      active: formData.active,
+      suspended: formData.suspended,
+      createdAt: formData.createdAt.toDate(), // Convert Timestamp to Date
+      speciality: formData.speciality,
+      experienceYears: formData.experienceYears,
+      professionalId: formData.professionalId,
+      awaitingApproval: formData.awaitingApproval,
+      approved: formData.approved,
+      phone: formData.phone,
+      message: formData.message,
+    }
+  )
+    .then((response) => {
+      console.log('SUCCESS!', response.status, response.text);
+    }, (error) => {
+      console.log('FAILED...', error);
+    });
+}
+
+async function sendMessage() {
+
+  // Verify essential fields
+  if (!formData.fullName ||
+    !formData.email ||
+    !formData.address ||
+    !formData.city ||
+    !formData.country ||
+    !formData.state ||
+    !formData.speciality ||
+    !formData.professionalId ||
+    !formData.phone ||
+    !formData.message) {
+    push.error('Por favor, complete todos los campos')
+    return
+  }
+
+  const notification = push.promise("Estamos enviando su mensaje, por favor espere...")
+  emailjs.send(
+    'service_yr3zwrb',
+    'template_kun292z',
+    {
+      fullName: formData.fullName,
+      email: formData.email,
+      address: formData.address,
+      city: formData.city,
+      country: formData.country,
+      state: formData.state,
+      userUid: formData.userUid,
+      active: formData.active,
+      suspended: formData.suspended,
+      createdAt: formData.createdAt.toDate(), // Convert Timestamp to Date
+      speciality: formData.speciality,
+      experienceYears: formData.experienceYears,
+      professionalId: formData.professionalId,
+      awaitingApproval: formData.awaitingApproval,
+      approved: formData.approved,
+      phone: formData.phone,
+      message: formData.message,
+    }
+  )
+    .then((response) => {
+      console.log('SUCCESS!', response.status, response.text);
+      notification.resolve('Su mensaje ha sido enviado correctamente!')
+    }, (error) => {
+      console.log('FAILED...', error);
+      notification.reject('Hubo un error al enviar su mensaje. Por favor intente de nuevo.')
+    });
+
+}
+
+
+
 </script>
 
 <style scoped>
 .input-style {
-  @apply h-10 border mt-1 rounded px-4 w-full bg-blue-50 outline-blue-300;
+  @apply h-10 border mt-1 rounded px-4 w-full bg-white outline-blue-300;
 }
 
 .input-icon-group {
-  @apply h-10 bg-blue-50 flex border border-blue-200 rounded items-center mt-1;
+  @apply h-10 bg-white flex border border-blue-200 rounded items-center mt-1;
 }
 
 .input-inner {

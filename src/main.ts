@@ -40,10 +40,15 @@ addIcons(
   FaPenFancy,
   FaPhoneAlt,
 )
+import 'notivue/notification.css' // Only needed if using built-in <Notification />
+import 'notivue/animations.css' // Only needed if using default animations
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
+import { createNotivue } from 'notivue'
+const notivue = createNotivue()
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -67,4 +72,5 @@ const app = createApp(App)
 app.component('v-icon', OhVueIcon)
 app.use(createPinia())
 app.use(router)
+app.use(notivue)
 app.mount('#app')

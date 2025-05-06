@@ -13,9 +13,11 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@heroicons/vue": "^2.2.0",
     "@vuepic/vue-datepicker": "^11.0.2",
     "firebase": "^11.6.0",
+    "notivue": "^2.4.5",
     "oh-vue-icons": "^1.0.0-rc3",
     "pinia": "^3.0.1",
     "tailwindcss-animated": "^2.0.0",
