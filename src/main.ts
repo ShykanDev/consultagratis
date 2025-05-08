@@ -22,6 +22,12 @@ import {
   FaBriefcase,
   FaPenFancy,
   FaPhoneAlt,
+  BiWhatsapp,
+  MdContactsupportRound,
+  MdSchedule,
+  MdInfooutline,
+  BiFilePerson,
+  BiArrowRightCircleFill,
 } from 'oh-vue-icons/icons'
 addIcons(
   FaFlag,
@@ -39,6 +45,12 @@ addIcons(
   FaBriefcase,
   FaPenFancy,
   FaPhoneAlt,
+  BiWhatsapp,
+  MdContactsupportRound,
+  MdSchedule,
+  MdInfooutline,
+  BiFilePerson,
+  BiArrowRightCircleFill,
 )
 import 'notivue/notification.css' // Only needed if using built-in <Notification />
 import 'notivue/animations.css' // Only needed if using default animations

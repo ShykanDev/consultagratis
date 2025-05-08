@@ -1,7 +1,15 @@
 <template>
   <MainLayout>
     <template #main>
-      <div class="flex justify-center items-center p-4 min-h-screen bg-gradient-to-br from-blue-50 to-purple-100">
+      <div
+        class="flex overflow-hidden relative justify-center items-center p-4 min-h-screen bg-gradient-to-br from-blue-50 to-orange-100">
+
+        <RouterLink :to="{ name: 'testingFirebase' }"
+          class="flex absolute top-4 right-4 items-center p-2 bg-sky-700 rounded-2xl outline-white animate-delay-700 animate-fade-left outline-2">
+          <v-icon name="bi-file-person" scale="2" class="text-white" />
+          <span class="ml-2 text-white">Registrarse como profesional</span>
+          <v-icon name="bi-arrow-right-circle-fill" scale="2" class="ml-1 text-white" />
+        </RouterLink>
         <form @submit.prevent="register"
           class="p-8 space-y-6 w-full max-w-6xl min-h-full bg-white rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-xl">
           <!-- Header Section -->
@@ -94,8 +102,8 @@
           </div>
 
           <!-- Submit Button -->
-          <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold
-               hover:from-blue-700 hover:to-purple-700 transition-all transform hover:scale-[1.01] shadow-lg">
+          <button type="submit" class="w-full bg-gradient-to-r from-orange-300 to-orange-600 text-white py-4 rounded-xl font-semibold
+               hover:from-slate-700 hover:to-slate-700 transition-all transform hover:scale-[1.01] shadow-lg">
             Registrarse
           </button>
 
@@ -117,7 +125,7 @@ import { ref, computed } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import MainLayout from '@/layouts/MainLayout.vue';
-import { UserIcon, CakeIcon, EnvelopeIcon, LockClosedIcon, EyeIcon, ExclamationCircleIcon } from '@heroicons/vue/24/outline'
+import { UserIcon, EnvelopeIcon, LockClosedIcon, EyeIcon, ExclamationCircleIcon } from '@heroicons/vue/24/outline'
 import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, type UserCredential } from 'firebase/auth';
 import { doc, getFirestore, setDoc, Timestamp } from 'firebase/firestore';
 const date = ref(new Date());
@@ -199,7 +207,7 @@ const createUserData = async (user: UserCredential) => {
       age: formData.value.age,
       terms: formData.value.terms,
       createdAt: Timestamp.now(),
-      userId:user.user.uid
+      userId: user.user.uid
     });
   } catch (error) {
     console.log(error);
@@ -209,9 +217,9 @@ const createUserData = async (user: UserCredential) => {
 //Register the user to firebase
 const register = async () => {
   try {
-      const user = await createUserWithEmailAndPassword(auth, formData.value.email, formData.value.password)
-      sendEmailVerification(user.user)
-      await createUserData(user)
+    const user = await createUserWithEmailAndPassword(auth, formData.value.email, formData.value.password)
+    sendEmailVerification(user.user)
+    await createUserData(user)
     console.log('Account has been created successfully!')
     console.log('Email sent successfully!')
 

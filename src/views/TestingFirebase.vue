@@ -61,7 +61,7 @@
                       </div>
                     </div>
 
-                    <div class="md:col-span-2">
+                    <div class="md:col-span-2 animate-fade-up" v-if="formData.country === 'México'">
                       <label for="state">Estado / provincia</label>
                       <div class="input-icon-group">
                         <select name="state" id="state" v-model="formData.state" class="input-inner">
@@ -71,6 +71,14 @@
                             {{ state }}
                           </option>
                         </select>
+                      </div>
+                    </div>
+                    <div class="md:col-span-2 animate-fade-up" v-if="formData.country !== 'México'">
+                      <label for="state">Estado / provincia / localidad</label>
+                      <div class="input-icon-group">
+                        <input type="text" id="state" v-model="formData.state" @focus="formData.state = ''"
+                          @load=" formData.state = ''" class="input-inner"
+                          placeholder="Estado / provincia / localidad" />
                       </div>
                     </div>
 
@@ -134,7 +142,7 @@
                           <v-icon name="fa-pen-fancy" class="mt-1 mr-2 text-blue-500" />
                           <textarea id="mensaje" v-model="formData.message" rows="4"
                             class="w-full text-blue-900 outline-none min-h-[250px]"
-                            placeholder="Cuéntanos más sobre ti, por qué deseas unirte, etc."></textarea>
+                            placeholder="Cuéntanos más sobre usted, información detallada, información profesional, etc."></textarea>
                         </div>
                       </div>
                     </article>
@@ -312,6 +320,11 @@ const sendEmails = () => {
 }
 
 async function sendMessage() {
+  //if agree is false, return
+  if (!formData.agree) {
+    push.error('Por favor, acepte los términos y condiciones')
+    return
+  }
 
   // Verify essential fields
   if (!formData.fullName ||
