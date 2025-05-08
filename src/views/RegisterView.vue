@@ -121,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import MainLayout from '@/layouts/MainLayout.vue';
@@ -236,6 +236,37 @@ const register = async () => {
     console.log(error);
   }
 }
+
+// Función para verificar si es menor de edad (18 años)
+const checkIfMinor = () => {
+  if (!date.value) {
+    console.log("No se ha seleccionado fecha");
+    return;
+  }
+
+  const birthDate = new Date(date.value);
+  const today = new Date();
+
+  // Calculamos la edad restando los años
+  let age = today.getFullYear() - birthDate.getFullYear();
+
+  // Ajustamos si aún no ha pasado el cumpleaños este año
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  const isMinor = age < 18;
+  console.log(`Edad calculada: ${age} años - ${isMinor ? "Es menor de edad" : "Es mayor de edad"}`);
+
+  return isMinor;
+};
+
+// Puedes llamarla cuando cambie la fecha o al enviar el formulario
+// Ejemplo de uso:
+watch(date, () => {
+  checkIfMinor();
+});
 </script>
 
 <style scoped></style>

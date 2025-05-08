@@ -54,6 +54,11 @@ const router = createRouter({
       name: 'testingFirebase',
       component: () => import('../views/TestingFirebase.vue'),
     },
+    {
+      path: '/user',
+      name: 'user',
+      component: () => import('../views/ClientView.vue'),
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     return { top: 0, behavior: 'smooth' }
