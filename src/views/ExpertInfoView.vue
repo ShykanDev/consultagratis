@@ -36,17 +36,26 @@
 
             <div v-else class="flex flex-col items-start md:flex-row md:justify-between md:items-center">
               <div class="mb-4 md:mb-0">
-                <p class="flex gap-2 items-center text-red-600">
-                  <i id="inactivo" class="fas fa-circle-notch"></i>
-                  No disponible
-                </p>
+
                 <p class="text-gray-600">Puede contratar al experto aquí</p>
               </div>
-              <a :href="hireLink"
-                class="px-4 py-2 text-white rounded transition btn-general bg-slate-800 hover:bg-slate-700">
-                Contratar Experto
-              </a>
 
+              <section v-if="clientStore().getClientUid && userAppointmentsFb.length > 0">
+                <div
+                  class="flex flex-col gap-4 justify-between items-center p-6 mx-7 my-6 text-white bg-gradient-to-tr from-emerald-600 to-emerald-700 rounded-2xl shadow-lg animate-fade-up md:flex-row">
+                  <h2 class="text-2xl font-semibold font-openSans">Usted tiene una cita para el día {{
+                    userAppointmentsFb[0].day }} {{ userAppointmentsFb[0].dayNumber }} {{ userAppointmentsFb[0].month }}
+                    del {{ userAppointmentsFb[0].year }}
+                  </h2>
+                  <div class="flex flex-col gap-2 items-center">
+
+                    <RouterLink :to="{ name: 'user' }"
+                      class="p-2 font-medium text-emerald-800 bg-white rounded-xl hover:underline">
+                      Ver citas
+                    </RouterLink>
+                  </div>
+                </div>
+              </section>
             </div>
           </div>
           <div>
@@ -64,16 +73,12 @@
                 :selected-hour="userHourSelection" />
             </div>
           </section>
+
         </div>
       </section>
 
       <!--Section to show the user next date if exists (v-if) -->
-      <section v-if="userDateSelection && userHourSelection">
-        <div
-          class="flex flex-col gap-4 justify-between items-center p-6 rounded-2xl shadow-lg animate-fade-up md:flex-row bg-slate-800">
-          <h2>Usted tiene una cita para el</h2>
-        </div>
-      </section>
+
 
 
       <article class="px-4 w-full">
@@ -100,7 +105,96 @@
             Agendar Cita
           </button>
         </div>
+        <section v-if="userDateSelection && userHourSelection"
+          class="p-8 mx-auto my-4 max-w-7xl bg-white bg-sky-50 rounded-xl border border-sky-600 shadow-lg">
+          <div class="flex items-center mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3 w-8 h-8 text-rose-600" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+            <h2 class="text-2xl font-bold text-gray-800">Formulario de Consulta</h2>
+          </div>
+
+          <!-- Textarea con estilo moderno -->
+          <div class="mb-6">
+            <div class="flex justify-between items-center mb-2">
+              <label for="consulta" class="block text-sm font-medium text-gray-700">Describe tu consulta</label>
+              <span class="text-xs text-gray-500">Máx. 500 caracteres</span>
+            </div>
+            <div class="relative">
+              <textarea id="consulta" name="consulta" rows="5" maxlength="500"
+                class="px-4 py-3 w-full rounded-lg border border-gray-200 shadow-sm transition-all duration-200 resize-none focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                placeholder="Por favor, describe detalladamente tu consulta..."></textarea>
+              <div class="absolute right-3 bottom-3 text-xs text-gray-400">
+                <span id="char-count">0</span>/500
+              </div>
+            </div>
+          </div>
+
+          <!-- Campo de archivo moderno -->
+          <div class="mb-6">
+            <label class="block mb-2 text-sm font-medium text-gray-700">Adjuntar archivo</label>
+            <div class="flex justify-center items-center w-full">
+              <label
+                class="flex flex-col w-full h-32 rounded-xl border-2 border-gray-300 border-dashed transition duration-300 cursor-pointer hover:border-rose-400">
+                <div class="flex flex-col justify-center items-center pt-7">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400 group-hover:text-rose-600"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-rose-600">
+                    Haga click para seleccionar
+                  </p>
+                  <p class="mt-2 text-xs text-gray-400">Formatos soportados: PDF, JPG, PNG (Max. 5MB)</p>
+                </div>
+                <input type="file" class="absolute opacity-0" />
+              </label>
+            </div>
+          </div>
+
+          <!-- Disclaimer importante -->
+          <div class="p-4 mb-6 bg-rose-50 rounded-r-lg border-l-4 border-rose-400">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-sky-600" viewBox="0 0 20 20"
+                  fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-rose-800">Política importante</h3>
+                <div class="mt-2 text-xl text-rose-700">
+                  <p>
+                    Por favor, no incluya datos de contacto (teléfonos, emails, redes sociales) en tu consulta.
+                    Compartir información para realizar tratos fuera de nuestra plataforma infringe nuestros
+                    <a href="#" class="font-medium underline hover:text-rose-600">Términos y Condiciones</a>
+                    y podría resultar en la eliminación de tu cuenta. Agradecemos tu comprensión y cooperación.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botón de enviar con icono -->
+          <button type="submit"
+            class="w-full flex items-center justify-center bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white font-medium py-3 px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-[1.02]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
+                clip-rule="evenodd" />
+            </svg>
+            Enviar consulta
+          </button>
+        </section>
       </article>
+
+      <section>
+
+      </section>
 
       <!-- Sección de descripción -->
       <section class="py-6 bg-white">
@@ -109,6 +203,9 @@
         </div>
       </section>
 
+      <section>
+
+      </section>
       <hr class="my-8 border-gray-300" />
 
       <!-- Sección de servicios y formulario -->
@@ -519,6 +616,7 @@ import DateSquare from '@/components/ExpertoInfoView/DateSquare.vue';
 import AnimationLoadingCircle from '@/animations/AnimationLoadingCircle.vue';
 import clientStore from '@/stores/client';
 import authStore from '@/stores/auth';
+import type { IFutureAppointment } from '@/interfaces/IFutureAppointment';
 
 
 const date = ref(new Date())
@@ -812,8 +910,8 @@ const client = clientStore();
 const userHasScheduled = ref(false);
 
 
-//Getting the client appointments
-const userAppointmentsFb = ref([]);
+//Getting the client appointments function
+const userAppointmentsFb = ref<IFutureAppointment[]>([]);
 const getClientAppointments = async () => {
   try {
     if (client.getClientUid) { //If client is logged in then the expert data could be edited (add date)
@@ -838,7 +936,7 @@ const getClientAppointments = async () => {
   }
 }
 
-//Getting the client appointments
+//Getting the client appointments onMounted
 onMounted(() => {
   getClientAppointments();
 })
@@ -855,6 +953,7 @@ const addFutureAppointment = async () => {
         month: userMonth.value,
         dayNumber: userDayNumber.value,
         createdAt: Timestamp.now(),
+        year: new Date().getFullYear(),
         userId: client.getClientUid,
         proffession: props.proffession,
       }
@@ -897,6 +996,7 @@ const scheduleAppointment = async (index: number) => {
 
   console.log(weeklyScheduleUpdated);
 
+
   try {
     //Vaidation goes here
     // Actualizar Firebase
@@ -910,6 +1010,7 @@ const scheduleAppointment = async (index: number) => {
     console.log('Appointment scheduled successfully');
 
     addFutureAppointment()
+    getClientAppointments()
   } catch (error) {
     console.log(error);
   }

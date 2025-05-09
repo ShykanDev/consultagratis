@@ -5,7 +5,7 @@
         class="flex overflow-hidden relative justify-center items-center p-4 min-h-screen bg-gradient-to-br from-blue-50 to-orange-100">
 
         <RouterLink :to="{ name: 'registroExperto' }"
-          class="flex absolute top-4 right-4 items-center p-2 bg-sky-700 rounded-2xl outline-white animate-delay-700 animate-fade-left outline-2">
+          class="flex absolute top-4 right-4 items-center p-2 bg-sky-700 rounded-2xl outline-white animate-delay-[350ms] animate-fade-left outline-2">
           <v-icon name="bi-file-person" scale="2" class="text-white" />
           <span class="ml-2 text-white">Registrarse como profesional</span>
           <v-icon name="bi-arrow-right-circle-fill" scale="2" class="ml-1 text-white" />

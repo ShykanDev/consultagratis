@@ -30,6 +30,15 @@ import {
   BiArrowRightCircleFill,
   FaEnvelope,
   FaLock,
+  FaUserCheck,
+  FaCalendarDay,
+  HiSolidClock,
+  HiSolidUser,
+  FaClock,
+  FaUserTie,
+  HiClock,
+  HiCalendar,
+  HiUser,
 } from 'oh-vue-icons/icons'
 addIcons(
   FaFlag,
@@ -55,6 +64,15 @@ addIcons(
   BiArrowRightCircleFill,
   FaEnvelope,
   FaLock,
+  FaUserCheck,
+  FaCalendarDay,
+  HiSolidClock,
+  HiSolidUser,
+  FaClock,
+  FaUserTie,
+  HiClock,
+  HiCalendar,
+  HiUser,
 )
 import 'notivue/notification.css' // Only needed if using built-in <Notification />
 import 'notivue/animations.css' // Only needed if using default animations

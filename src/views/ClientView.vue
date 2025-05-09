@@ -10,8 +10,7 @@
           ]">
             {{
               key === 'FutureAppointments' ? 'Próximas Citas' :
-                key === 'HistoryComponent' ? 'Historial' :
-                  key === 'SettingsComponent' ? 'Configuración' : key
+                key === 'HistoryComponent' ? 'Historial' : key
             }}
           </button>
         </aside>
@@ -50,7 +49,6 @@ const props = defineProps({
 const componentMap = {
   FutureAppointments: defineAsyncComponent(() => import('@/components/Client/FutureAppointments.vue')),
   HistoryComponent: defineAsyncComponent(() => import('@/components/Client/HistoryComponent.vue')),
-  SettingsComponent: defineAsyncComponent(() => import('@/components/Client/SettingsComponent.vue'))
 }
 
 const componentKeys = Object.keys(componentMap)
