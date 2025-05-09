@@ -4,14 +4,14 @@
       <div
         class="flex overflow-hidden relative justify-center items-center p-4 min-h-screen bg-gradient-to-br from-blue-50 to-orange-100">
 
-        <RouterLink :to="{ name: 'testingFirebase' }"
+        <RouterLink :to="{ name: 'registroExperto' }"
           class="flex absolute top-4 right-4 items-center p-2 bg-sky-700 rounded-2xl outline-white animate-delay-700 animate-fade-left outline-2">
           <v-icon name="bi-file-person" scale="2" class="text-white" />
           <span class="ml-2 text-white">Registrarse como profesional</span>
           <v-icon name="bi-arrow-right-circle-fill" scale="2" class="ml-1 text-white" />
         </RouterLink>
         <form @submit.prevent="register"
-          class="p-8 space-y-6 w-full max-w-6xl min-h-full bg-white rounded-2xl shadow-2xl transition-all duration-300 hover:shadow-xl">
+          class="p-8 mt-16 space-y-6 w-full max-w-6xl min-h-full bg-white rounded-2xl shadow-2xl transition-all duration-300 lg:mt-0 hover:shadow-xl">
           <!-- Header Section -->
           <div class="space-y-2 text-center">
             <h1
@@ -46,9 +46,9 @@
               <VueDatePicker v-model="date" auto-apply partial-flow :enable-time-picker="false"
                 :flow="['month', 'year', 'calendar']" />
 
-              <p v-if="errors.age" class="flex items-center space-x-1 text-sm text-red-500">
+              <p v-if="isMinor" class="flex items-center space-x-1 text-sm text-red-500">
                 <ExclamationCircleIcon class="w-4 h-4" />
-                <span>{{ errors.age }}</span>
+                <span>Debe ser mayor de edad</span>
               </p>
             </div>
 
@@ -98,6 +98,10 @@
                 <a href="#" class="text-blue-600 hover:underline">Términos de servicio</a> and
                 <a href="#" class="text-blue-600 hover:underline">Política de privacidad</a>
               </label>
+              <p v-if="errors.terms" class="flex items-center space-x-1 text-sm text-red-500">
+                <ExclamationCircleIcon class="w-4 h-4" />
+                <span>{{ errors.terms }}</span>
+              </p>
             </div>
           </div>
 
@@ -127,7 +131,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import MainLayout from '@/layouts/MainLayout.vue';
 import { UserIcon, EnvelopeIcon, LockClosedIcon, EyeIcon, ExclamationCircleIcon } from '@heroicons/vue/24/outline'
 import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, type UserCredential } from 'firebase/auth';
-import { doc, getFirestore, setDoc, Timestamp } from 'firebase/firestore';
+import { addDoc, collection, doc, getFirestore, setDoc, Timestamp } from 'firebase/firestore';
 const date = ref(new Date());
 //Para asegurar que el esta declarando decir la verdad al registrasse
 
@@ -201,27 +205,49 @@ const db = getFirestore();
 const createUserData = async (user: UserCredential) => {
   try {
     const docRef = doc(db, "users", user.user.uid);
+
+    // 1. Crea el documento principal
     await setDoc(docRef, {
       name: formData.value.name,
       email: formData.value.email,
       age: formData.value.age,
       terms: formData.value.terms,
       createdAt: Timestamp.now(),
-      userId: user.user.uid
+      userId: user.user.uid,
+      freeConsultations: true,
     });
+
+    // 2. Añade subcolección de historial
+    const historyRef = collection(docRef, "HistoryAppointments");
+    await addDoc(historyRef, {
+      createdAt: Timestamp.now(),
+      userId: user.user.uid,
+    });
+
+    // 3. Añade subcolección de futuras citas
+    const futureRef = collection(docRef, "FutureAppointments");
+    await addDoc(futureRef, {
+      createdAt: Timestamp.now(),
+      userId: user.user.uid,
+    });
+
+    console.log("Usuario y subcolecciones creadas");
+
   } catch (error) {
-    console.log(error);
+    console.error("Error al crear usuario o subcolecciones:", error);
   }
 }
 
+
 //Register the user to firebase
 const register = async () => {
+  checkIfMinor()
+  if (isMinor.value) return
+  if (!validateForm()) return
   try {
     const user = await createUserWithEmailAndPassword(auth, formData.value.email, formData.value.password)
     sendEmailVerification(user.user)
     await createUserData(user)
-    console.log('Account has been created successfully!')
-    console.log('Email sent successfully!')
 
     //Once user has created his account successfully, reset the register fields
     formData.value = {
@@ -236,8 +262,8 @@ const register = async () => {
     console.log(error);
   }
 }
-
-// Función para verificar si es menor de edad (18 años)
+const isMinor = ref(false)
+//Función para verificar si es menor de edad (18 años)
 const checkIfMinor = () => {
   if (!date.value) {
     console.log("No se ha seleccionado fecha");
@@ -256,10 +282,10 @@ const checkIfMinor = () => {
     age--;
   }
 
-  const isMinor = age < 18;
-  console.log(`Edad calculada: ${age} años - ${isMinor ? "Es menor de edad" : "Es mayor de edad"}`);
+  isMinor.value = age < 18;
+  console.log(`Edad calculada: ${age} años - ${isMinor.value ? "Es menor de edad" : "Es mayor de edad"}`);
 
-  return isMinor;
+  return isMinor.value;
 };
 
 // Puedes llamarla cuando cambie la fecha o al enviar el formulario

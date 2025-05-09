@@ -27,6 +27,10 @@
           </div>
         </section>
 
+        <!-- Temporal stylished button to go to expertInfo (routerLink) -->
+        <RouterLink to="/expertoInfo" class="px-4 py-2 font-semibold text-white bg-sky-800 rounded">PREGUNTA A UN
+          EXPERTO <v-icon class="ml-2" name="md-infooutline" scale="1.2" /></RouterLink>
+
         <!-- Ads Section -->
         <section class="grid grid-cols-1 gap-4 p-8 md:grid-cols-3">
           <a target="_blank" href="https://miempleador.com"

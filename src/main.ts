@@ -28,6 +28,8 @@ import {
   MdInfooutline,
   BiFilePerson,
   BiArrowRightCircleFill,
+  FaEnvelope,
+  FaLock,
 } from 'oh-vue-icons/icons'
 addIcons(
   FaFlag,
@@ -51,6 +53,8 @@ addIcons(
   MdInfooutline,
   BiFilePerson,
   BiArrowRightCircleFill,
+  FaEnvelope,
+  FaLock,
 )
 import 'notivue/notification.css' // Only needed if using built-in <Notification />
 import 'notivue/animations.css' // Only needed if using default animations

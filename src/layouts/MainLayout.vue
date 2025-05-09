@@ -14,6 +14,10 @@
         <RouterLink :to="{ name: 'help' }" class="hover:underline">Ayuda</RouterLink>
         <RouterLink :to="{ name: 'contact' }" class="text-orange-500 hover:underline">Contacto</RouterLink>
         <RouterLink :to="{ name: 'register' }" class="text-orange-500 hover:underline">Unirme</RouterLink>
+        <RouterLink :to="{ name: 'login' }"
+          class="p-[2px] text-center text-white bg-orange-500 rounded hover:underline">
+          <span class="p-2">Iniciar Sesión</span>
+        </RouterLink>
       </div>
       <div class="gtranslate_wrapper"></div>
 

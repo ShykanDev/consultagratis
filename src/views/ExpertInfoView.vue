@@ -1,325 +1,381 @@
 <template>
-   <MainLayout>
+  <MainLayout>
     <template #main>
 
-  <!-- Sección principal del experto -->
-  <section class="py-8 bg-gray-50">
-    <div class="container px-4 mx-auto">
-      <div class="p-6 bg-white rounded-lg shadow">
-        <h2 class="mb-2 text-2xl font-bold">{{ title }}</h2>
-        <p class="mb-1 text-gray-700">
-          Área: <span class="font-medium">{{ area }}</span>
-          <i :class="[areaIcon, 'text-slate-800 ml-1']"></i>
-        </p>
-        <p class="flex gap-2 items-center mb-4 text-gray-700">
-          <i class="fas fa-calendar-alt text-slate-800"></i>
-          {{ availableDayFull }} {{ availableHourStart }}:00am -
-          {{ availableHourEnd }}:00pm
-        </p>
-
-        <!-- Bloque según la disponibilidad -->
-        <div v-if="isAvailable" class="text-green-600">
-          <p class="flex gap-2 items-center mb-4">
-            <i id="activo" class="animate-spin fas fa-circle-notch"></i>
-            Disponible para prueba gratuita
-          </p>
-          <div class="flex gap-2 items-center">
-            <a :href="freeTrialLink" class="px-4 py-2 text-white rounded transition btn-secundario bg-slate-800 hover:bg-slate-700">
-              Crear contacto
-            </a>
-            <section class="bg-slate-300">
-
-            </section>
-          </div>
-        </div>
-
-        <div v-else class="flex flex-col items-start md:flex-row md:justify-between md:items-center">
-          <div class="mb-4 md:mb-0">
-            <p class="flex gap-2 items-center text-red-600">
-              <i id="inactivo" class="fas fa-circle-notch"></i>
-              No disponible
+      <!-- Sección principal del experto -->
+      <section class="py-8 bg-gray-50">
+        <div class="container px-4 mx-auto">
+          <div class="p-6 bg-white rounded-lg shadow">
+            <h2 class="mb-2 text-2xl font-bold">{{ title }}</h2>
+            <p class="mb-1 text-gray-700">
+              Área: <span class="font-medium">{{ area }}</span>
+              <i :class="[areaIcon, 'text-slate-800 ml-1']"></i>
             </p>
-            <p class="text-gray-600">Puede contratar al experto aquí</p>
-          </div>
-          <a :href="hireLink" class="px-4 py-2 text-white rounded transition btn-general bg-slate-800 hover:bg-slate-700">
-            Contratar Experto
-          </a>
+            <p class="flex gap-2 items-center mb-4 text-gray-700">
+              <i class="fas fa-calendar-alt text-slate-800"></i>
+              {{ availableDayFull }} {{ availableHourStart }}:00am -
+              {{ availableHourEnd }}:00pm
+            </p>
 
-        </div>
-      </div>
-      <div>
-  </div>
-  <!-- Loading Animation -->
-   <section v-if="isLoading" class="flex justify-center items-center">
-    <AnimationLoadingCircle />
-   </section>
-  <section v-if="availableTimeData && availableTimeData.length > 0" class="grid grid-cols-7 py-3">
-  <div v-for="(day, index) in availableTimeData[0].weeklySchedule" :key="index" class="animate-fade-up" :style="{ animationDelay: `${index * 100}ms` }">
-    <DateSquare
-      @click="getUserSelection(day, $event, index)"
-      :day-info="day.dayInfo"
-      :available-for-appointment="day.dayInfo.isDayAvailable"
-      :available-hours="day.dayInfo.availableHours"
-      :hours-taken="day.dayInfo.hoursTaken"
-      :selected-day="userDateSelection"
-      :selected-hour="userHourSelection"
+            <!-- Bloque según la disponibilidad -->
+            <div v-if="isAvailable" class="text-green-600">
+              <p class="flex gap-2 items-center mb-4">
+                <i id="activo" class="animate-spin fas fa-circle-notch"></i>
+                Disponible para prueba gratuita
+              </p>
+              <div class="flex gap-2 items-center">
+                <a :href="freeTrialLink"
+                  class="px-4 py-2 text-white rounded transition btn-secundario bg-slate-800 hover:bg-slate-700">
+                  Crear contacto
+                </a>
+                <section class="bg-slate-300">
 
-    />
-  </div>
-</section>
-    </div>
-  </section>
+                </section>
+              </div>
+            </div>
 
-  <article class="px-4 w-full">
-  <div v-if="userDateSelection && userHourSelection" class="flex flex-col gap-4 justify-between items-center p-6 rounded-2xl shadow-lg animate-fade-up md:flex-row bg-slate-800">
-    <h3 class="flex gap-3 items-center text-lg font-semibold text-white md:text-2xl">
-      <v-icon name="bi-calendar2-week-fill" scale="1.5" class="text-white" />
-      <span class="flex-1">
-        Agendar cita para el
-        <span class="text-slate-100"><span class="px-1 py-1 italic font-black bg-white rounded-md shadow-sm text-slate-900 animate-fade" :key="userDateSelection">{{ userDateSelection }} {{ userDayNumber }} </span> de {{ userMonth }} del {{ new Date().getFullYear() }}</span>
-
-        a las
-        <span class="inline-block px-2 py-1 mx-1 font-black italic bg-white rounded-md shadow-sm text-slate-900 font-sarabun animate-fade animate-delay-[350ms]" :key="userHourSelection">{{ userHourSelection }}</span> horas
-      </span>
-    </h3>
-    <button @click="scheduleAppointment(userIndexSelection)" class="flex items-center px-4 py-2 font-semibold bg-white rounded-xl shadow-md transition text-slate-800 hover:bg-slate-100">
-      <v-icon name="md-addalert" scale="1.5" class="text-slate-800" />
-      Agendar Cita
-    </button>
-  </div>
-</article>
-
-  <!-- Sección de descripción -->
-  <section class="py-6 bg-white">
-    <div class="container px-4 mx-auto">
-      <p class="text-gray-800">{{ description }}</p>
-    </div>
-  </section>
-
-  <hr class="my-8 border-gray-300" />
-
-  <!-- Sección de servicios y formulario -->
-  <section class="container px-4 pb-8 mx-auto">
-    <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-      <!-- Descripción de servicios -->
-      <div>
-        <h2 class="mb-4 text-2xl font-bold">¿En qué puede ayudar el profesionista/experto?</h2>
-        <div class="grid grid-cols-2 gap-4">
-          <ul class="space-y-3">
-            <li v-for="(item, index) in offersLeft" :key="index" class="flex gap-2 items-start">
-              <i :class="[item.icon, 'text-slate-800']"></i>
-              <span class="text-gray-700">{{ item.text }}</span>
-            </li>
-          </ul>
-          <ul class="space-y-3">
-            <li v-for="(item, index) in offersRight" :key="index" class="flex gap-2 items-start">
-              <i :class="[item.icon, 'text-slate-800']"></i>
-              <span class="text-gray-700">{{ item.text }}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Formulario -->
-      <div>
-        <section id="ancla-consulta">
-          <div class="p-6 bg-gray-50 rounded-lg shadow">
-            <section v-if="isAvailable">
-              <form :action="formAction" method="post" enctype="multipart/form-data" class="space-y-4">
-                <h2 class="text-xl font-semibold text-center text-slate-800">
-                  Complete el formulario para contactar al profesionista
-                </h2>
-
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  <div>
-                    <label for="nombre" class="block text-gray-700">Nombre:</label>
-                    <input class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800" type="text" name="nombre" id="nombre" placeholder="Con quien nos pondremos en contacto" required>
-                  </div>
-                  <div>
-                    <label for="apellidos" class="block text-gray-700">Apellidos:</label>
-                    <input class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800" type="text" name="apellidos" id="apellidos" placeholder="Sus apellidos" required>
-                  </div>
-                  <div>
-                    <label for="correo" class="block text-gray-700">Correo electrónico:</label>
-                    <input class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800" type="email" name="email" id="correo" placeholder="A este correo responderemos" required>
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  <div>
-                    <label for="tel" class="block text-gray-700">Teléfono:</label>
-                    <input class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800" type="tel" name="telefono" id="tel" placeholder="(55)55-55-55-55" required>
-                  </div>
-                  <div>
-                    <label for="experto" class="block text-gray-700">Tipo de Experto</label>
-                    <select class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800" name="experto" id="experto" required>
-                      <option :selected="true" :value="expertType">{{ expertType }}</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label for="motivo" class="block text-gray-700">Motivo del contacto</label>
-                    <select class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800" name="motivo" id="motivo" required>
-                      <option selected disabled value="">Seleccionar</option>
-                      <option value="Contratar">Contratar</option>
-                      <option value="Ayuda">Ayuda</option>
-                      <option value="Pregunta Rápida">Pregunta Rápida</option>
-                      <option value="Asesoría">Asesoría</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <strong class="block mb-2 text-gray-700">Se requiere fecha de nacimiento para verificar mayoría de edad</strong>
-                  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    <div>
-                      <label for="dia-na" class="block text-gray-700">Día:</label>
-                      <input class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800" type="number" name="dia_na" id="dia-na" min="1" max="31" placeholder="3">
-                    </div>
-                    <div>
-                      <label for="mes-na" class="block text-gray-700">Mes:</label>
-                      <select class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800" name="mes_na" id="mes-na">
-                        <option value="Enero">Enero</option>
-                        <option value="Febrero">Febrero</option>
-                        <option value="Marzo">Marzo</option>
-                        <option value="Abril">Abril</option>
-                        <option value="Mayo">Mayo</option>
-                        <option value="Junio">Junio</option>
-                        <option value="Julio">Julio</option>
-                        <option value="Agosto">Agosto</option>
-                        <option value="Septiembre">Septiembre</option>
-                        <option value="Octubre">Octubre</option>
-                        <option :selected="defaultMonth === 'Noviembre'" value="Noviembre">Noviembre</option>
-                        <option value="Diciembre">Diciembre</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label for="anio-na" class="block text-gray-700">Año:</label>
-                      <input class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800" type="number" name="anio_na" id="anio-na" placeholder="1997">
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label for="mensaje" class="block text-gray-700">Escriba de la forma más breve el requerimiento:</label>
-                  <textarea class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800" name="mensaje" id="mensaje" rows="3"></textarea>
-                </div>
-
-                <!-- Medios de contacto -->
-                <div>
-                  <label class="block mb-2 text-gray-700">Seleccione el medio de contacto que quisiera tener con el experto</label>
-                  <div class="flex flex-wrap gap-4">
-                    <!-- Videollamada -->
-                    <div class="w-full sm:w-auto">
-                      <p class="mb-1 font-semibold text-slate-800">Videollamada:</p>
-                      <div class="flex gap-2 items-center">
-                        <label for="meet" class="cursor-pointer">
-                          <img src="./img/meet.jpg" alt="Google Meet" class="w-10 h-10 rounded-full border border-slate-800">
-                        </label>
-                        <input type="radio" name="medio_contacto" id="meet" value="Google Meet" class="hidden">
-                        <label for="zoom" class="cursor-pointer">
-                          <img src="./img/zoom.png" alt="Zoom" class="w-10 h-10 rounded-full border border-slate-800">
-                        </label>
-                        <input type="radio" name="medio_contacto" id="zoom" value="Zoom" class="hidden">
-                        <label for="whatsapp-videollamada" class="cursor-pointer">
-                          <img src="./img/whatsapp.jpg" alt="WhatsApp Videollamada" class="w-10 h-10 rounded-full border border-slate-800">
-                        </label>
-                        <input type="radio" name="medio_contacto" id="whatsapp-videollamada" value="WhatsApp-Videollamada" class="hidden">
-                        <label for="messenger-videollamada" class="cursor-pointer">
-                          <img src="./img/messenger.jpg" alt="Messenger Videollamada" class="w-10 h-10 rounded-full border border-slate-800">
-                        </label>
-                        <input type="radio" name="medio_contacto" id="messenger-videollamada" value="Messenger-Videollamada" class="hidden">
-                      </div>
-                    </div>
-                    <!-- Mensajería -->
-                    <div class="w-full sm:w-auto">
-                      <p class="mb-1 font-semibold text-slate-800">Mensajería:</p>
-                      <div class="flex gap-2 items-center">
-                        <label for="whatsapp-mensajeria" class="cursor-pointer">
-                          <img src="./img/whatsapp.jpg" alt="WhatsApp Mensajería" class="w-10 h-10 rounded-full border border-slate-800">
-                        </label>
-                        <input type="radio" name="medio_contacto" id="whatsapp-mensajeria" value="WhatsApp-Mensajeria" class="hidden">
-                        <label for="messenger-mensajeria" class="cursor-pointer">
-                          <img src="./img/messenger.jpg" alt="Messenger Mensajería" class="w-10 h-10 rounded-full border border-slate-800">
-                        </label>
-                        <input type="radio" name="medio_contacto" id="messenger-mensajeria" value="Messenger-Mensajeria" class="hidden">
-                        <label for="mensajes-correo" class="cursor-pointer">
-                          <img src="./img/correo.png" alt="Correo" class="w-10 h-10 rounded-full border border-slate-800">
-                        </label>
-                        <input type="radio" name="medio_contacto" id="mensajes-correo" value="Correo-mensajeria" class="hidden">
-                      </div>
-                    </div>
-                    <!-- Llamadas -->
-                    <div class="w-full sm:w-auto">
-                      <p class="mb-1 font-semibold text-slate-800">Llamadas:</p>
-                      <div class="flex gap-2 items-center">
-                        <label for="whatsapp-llamada" class="cursor-pointer">
-                          <img src="./img/whatsapp.jpg" alt="WhatsApp Llamada" class="w-10 h-10 rounded-full border border-slate-800">
-                        </label>
-                        <input type="radio" name="medio_contacto" id="whatsapp-llamada" value="WhatsApp-Llamada" class="hidden">
-                        <label for="messenger-llamada" class="cursor-pointer">
-                          <img src="./img/messenger.jpg" alt="Messenger Llamada" class="w-10 h-10 rounded-full border border-slate-800">
-                        </label>
-                        <input type="radio" name="medio_contacto" id="messenger-llamada" value="Messenger-Llamada" class="hidden">
-                        <label for="llamada" class="cursor-pointer">
-                          <img src="./img/telefono.png" alt="Llamada" class="w-10 h-10 rounded-full border border-slate-800">
-                        </label>
-                        <input type="radio" name="medio_contacto" id="llamada" value="Llamada" class="hidden">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="robot">
-                  <div class="mb-2">
-                    <label class="block text-gray-700">Selecciona la opción correcta</label>
-                    <span class="block text-gray-700">¿Cuánto es 2 x 2?</span>
-                  </div>
-                  <div class="flex gap-4 items-center">
-                    <div class="flex gap-1 items-center">
-                      <input type="radio" name="robot" id="cuatro" value="4">
-                      <label for="cuatro" class="text-gray-700">4</label>
-                    </div>
-                    <div class="flex gap-1 items-center">
-                      <input type="radio" name="robot" id="dos" value="2">
-                      <label for="dos" class="text-gray-700">2</label>
-                    </div>
-                    <div class="flex gap-1 items-center">
-                      <input type="radio" name="robot" id="cinco" value="5">
-                      <label for="cinco" class="text-gray-700">5</label>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="text-right">
-                  <input type="submit" value="Contactar profesionista" class="px-6 py-2 text-white rounded transition bg-slate-800 hover:bg-slate-700">
-                </div>
-              </form>
-            </section>
-            <section v-else>
-              <div class="text-center">
-                <h2 class="mb-2 text-xl font-bold text-slate-600">
-                  El horario de contratación del experto es de 10:00am - 5:30pm
-                </h2>
-                <h3 class="mb-4 text-gray-700">
-                  Si desea contratar el experto o realizar una consulta sin ocupar los 15 minutos de prueba, puede agendar una cita
-                </h3>
-                <!--Disclaimer -->
-                <p class="text-sm italic text-gray-700 text-end">
-                  *Los expertos pueden tener un horario diferente al de la plataforma
+            <div v-else class="flex flex-col items-start md:flex-row md:justify-between md:items-center">
+              <div class="mb-4 md:mb-0">
+                <p class="flex gap-2 items-center text-red-600">
+                  <i id="inactivo" class="fas fa-circle-notch"></i>
+                  No disponible
                 </p>
+                <p class="text-gray-600">Puede contratar al experto aquí</p>
+              </div>
+              <a :href="hireLink"
+                class="px-4 py-2 text-white rounded transition btn-general bg-slate-800 hover:bg-slate-700">
+                Contratar Experto
+              </a>
+
+            </div>
+          </div>
+          <div>
+          </div>
+          <!-- Loading Animation -->
+          <section v-if="isLoading" class="flex justify-center items-center">
+            <AnimationLoadingCircle />
+          </section>
+          <section v-if="availableTimeData && availableTimeData.length > 0" class="grid grid-cols-7 py-3">
+            <div v-for="(day, index) in availableTimeData[0].weeklySchedule" :key="index" class="animate-fade-up"
+              :style="{ animationDelay: `${index * 100}ms` }">
+              <DateSquare @click="getUserSelection(day, $event, index)" :day-info="day.dayInfo"
+                :available-for-appointment="day.dayInfo.isDayAvailable" :available-hours="day.dayInfo.availableHours"
+                :hours-taken="day.dayInfo.hoursTaken" :selected-day="userDateSelection"
+                :selected-hour="userHourSelection" />
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!--Section to show the user next date if exists (v-if) -->
+      <section v-if="userDateSelection && userHourSelection">
+        <div
+          class="flex flex-col gap-4 justify-between items-center p-6 rounded-2xl shadow-lg animate-fade-up md:flex-row bg-slate-800">
+          <h2>Usted tiene una cita para el</h2>
+        </div>
+      </section>
+
+
+      <article class="px-4 w-full">
+        <div v-if="userDateSelection && userHourSelection"
+          class="flex flex-col gap-4 justify-between items-center p-6 rounded-2xl shadow-lg animate-fade-up md:flex-row bg-slate-800">
+          <h3 class="flex gap-3 items-center text-lg font-semibold text-white md:text-2xl">
+            <v-icon name="bi-calendar2-week-fill" scale="1.5" class="text-white" />
+            <span class="flex-1">
+              Agendar cita para el
+              <span class="text-slate-100"><span
+                  class="px-1 py-1 italic font-black bg-white rounded-md shadow-sm text-slate-900 animate-fade"
+                  :key="userDateSelection">{{ userDateSelection }} {{ userDayNumber }} </span> de {{ userMonth }} del {{
+                    new Date().getFullYear() }}</span>
+
+              a las
+              <span
+                class="inline-block px-2 py-1 mx-1 font-black italic bg-white rounded-md shadow-sm text-slate-900 font-sarabun animate-fade animate-delay-[350ms]"
+                :key="userHourSelection">{{ userHourSelection }}</span> horas
+            </span>
+          </h3>
+          <button @click="scheduleAppointment(userIndexSelection)"
+            class="flex items-center px-4 py-2 font-semibold bg-white rounded-xl shadow-md transition text-slate-800 hover:bg-slate-100">
+            <v-icon name="md-addalert" scale="1.5" class="text-slate-800" />
+            Agendar Cita
+          </button>
+        </div>
+      </article>
+
+      <!-- Sección de descripción -->
+      <section class="py-6 bg-white">
+        <div class="container px-4 mx-auto">
+          <p class="text-gray-800">{{ description }}</p>
+        </div>
+      </section>
+
+      <hr class="my-8 border-gray-300" />
+
+      <!-- Sección de servicios y formulario -->
+      <section class="container px-4 pb-8 mx-auto">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <!-- Descripción de servicios -->
+          <div>
+            <h2 class="mb-4 text-2xl font-bold">¿En qué puede ayudar el profesionista/experto?</h2>
+            <div class="grid grid-cols-2 gap-4">
+              <ul class="space-y-3">
+                <li v-for="(item, index) in offersLeft" :key="index" class="flex gap-2 items-start">
+                  <i :class="[item.icon, 'text-slate-800']"></i>
+                  <span class="text-gray-700">{{ item.text }}</span>
+                </li>
+              </ul>
+              <ul class="space-y-3">
+                <li v-for="(item, index) in offersRight" :key="index" class="flex gap-2 items-start">
+                  <i :class="[item.icon, 'text-slate-800']"></i>
+                  <span class="text-gray-700">{{ item.text }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Formulario -->
+          <div>
+            <section id="ancla-consulta">
+              <div class="p-6 bg-gray-50 rounded-lg shadow">
+                <section v-if="isAvailable">
+                  <form :action="formAction" method="post" enctype="multipart/form-data" class="space-y-4">
+                    <h2 class="text-xl font-semibold text-center text-slate-800">
+                      Complete el formulario para contactar al profesionista
+                    </h2>
+
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                      <div>
+                        <label for="nombre" class="block text-gray-700">Nombre:</label>
+                        <input
+                          class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
+                          type="text" name="nombre" id="nombre" placeholder="Con quien nos pondremos en contacto"
+                          required>
+                      </div>
+                      <div>
+                        <label for="apellidos" class="block text-gray-700">Apellidos:</label>
+                        <input
+                          class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
+                          type="text" name="apellidos" id="apellidos" placeholder="Sus apellidos" required>
+                      </div>
+                      <div>
+                        <label for="correo" class="block text-gray-700">Correo electrónico:</label>
+                        <input
+                          class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
+                          type="email" name="email" id="correo" placeholder="A este correo responderemos" required>
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                      <div>
+                        <label for="tel" class="block text-gray-700">Teléfono:</label>
+                        <input
+                          class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
+                          type="tel" name="telefono" id="tel" placeholder="(55)55-55-55-55" required>
+                      </div>
+                      <div>
+                        <label for="experto" class="block text-gray-700">Tipo de Experto</label>
+                        <select
+                          class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
+                          name="experto" id="experto" required>
+                          <option :selected="true" :value="expertType">{{ expertType }}</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label for="motivo" class="block text-gray-700">Motivo del contacto</label>
+                        <select
+                          class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
+                          name="motivo" id="motivo" required>
+                          <option selected disabled value="">Seleccionar</option>
+                          <option value="Contratar">Contratar</option>
+                          <option value="Ayuda">Ayuda</option>
+                          <option value="Pregunta Rápida">Pregunta Rápida</option>
+                          <option value="Asesoría">Asesoría</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <strong class="block mb-2 text-gray-700">Se requiere fecha de nacimiento para verificar mayoría de
+                        edad</strong>
+                      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                        <div>
+                          <label for="dia-na" class="block text-gray-700">Día:</label>
+                          <input
+                            class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
+                            type="number" name="dia_na" id="dia-na" min="1" max="31" placeholder="3">
+                        </div>
+                        <div>
+                          <label for="mes-na" class="block text-gray-700">Mes:</label>
+                          <select
+                            class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
+                            name="mes_na" id="mes-na">
+                            <option value="Enero">Enero</option>
+                            <option value="Febrero">Febrero</option>
+                            <option value="Marzo">Marzo</option>
+                            <option value="Abril">Abril</option>
+                            <option value="Mayo">Mayo</option>
+                            <option value="Junio">Junio</option>
+                            <option value="Julio">Julio</option>
+                            <option value="Agosto">Agosto</option>
+                            <option value="Septiembre">Septiembre</option>
+                            <option value="Octubre">Octubre</option>
+                            <option :selected="defaultMonth === 'Noviembre'" value="Noviembre">Noviembre</option>
+                            <option value="Diciembre">Diciembre</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label for="anio-na" class="block text-gray-700">Año:</label>
+                          <input
+                            class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
+                            type="number" name="anio_na" id="anio-na" placeholder="1997">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label for="mensaje" class="block text-gray-700">Escriba de la forma más breve el
+                        requerimiento:</label>
+                      <textarea
+                        class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
+                        name="mensaje" id="mensaje" rows="3"></textarea>
+                    </div>
+
+                    <!-- Medios de contacto -->
+                    <div>
+                      <label class="block mb-2 text-gray-700">Seleccione el medio de contacto que quisiera tener con el
+                        experto</label>
+                      <div class="flex flex-wrap gap-4">
+                        <!-- Videollamada -->
+                        <div class="w-full sm:w-auto">
+                          <p class="mb-1 font-semibold text-slate-800">Videollamada:</p>
+                          <div class="flex gap-2 items-center">
+                            <label for="meet" class="cursor-pointer">
+                              <img src="./img/meet.jpg" alt="Google Meet"
+                                class="w-10 h-10 rounded-full border border-slate-800">
+                            </label>
+                            <input type="radio" name="medio_contacto" id="meet" value="Google Meet" class="hidden">
+                            <label for="zoom" class="cursor-pointer">
+                              <img src="./img/zoom.png" alt="Zoom"
+                                class="w-10 h-10 rounded-full border border-slate-800">
+                            </label>
+                            <input type="radio" name="medio_contacto" id="zoom" value="Zoom" class="hidden">
+                            <label for="whatsapp-videollamada" class="cursor-pointer">
+                              <img src="./img/whatsapp.jpg" alt="WhatsApp Videollamada"
+                                class="w-10 h-10 rounded-full border border-slate-800">
+                            </label>
+                            <input type="radio" name="medio_contacto" id="whatsapp-videollamada"
+                              value="WhatsApp-Videollamada" class="hidden">
+                            <label for="messenger-videollamada" class="cursor-pointer">
+                              <img src="./img/messenger.jpg" alt="Messenger Videollamada"
+                                class="w-10 h-10 rounded-full border border-slate-800">
+                            </label>
+                            <input type="radio" name="medio_contacto" id="messenger-videollamada"
+                              value="Messenger-Videollamada" class="hidden">
+                          </div>
+                        </div>
+                        <!-- Mensajería -->
+                        <div class="w-full sm:w-auto">
+                          <p class="mb-1 font-semibold text-slate-800">Mensajería:</p>
+                          <div class="flex gap-2 items-center">
+                            <label for="whatsapp-mensajeria" class="cursor-pointer">
+                              <img src="./img/whatsapp.jpg" alt="WhatsApp Mensajería"
+                                class="w-10 h-10 rounded-full border border-slate-800">
+                            </label>
+                            <input type="radio" name="medio_contacto" id="whatsapp-mensajeria"
+                              value="WhatsApp-Mensajeria" class="hidden">
+                            <label for="messenger-mensajeria" class="cursor-pointer">
+                              <img src="./img/messenger.jpg" alt="Messenger Mensajería"
+                                class="w-10 h-10 rounded-full border border-slate-800">
+                            </label>
+                            <input type="radio" name="medio_contacto" id="messenger-mensajeria"
+                              value="Messenger-Mensajeria" class="hidden">
+                            <label for="mensajes-correo" class="cursor-pointer">
+                              <img src="./img/correo.png" alt="Correo"
+                                class="w-10 h-10 rounded-full border border-slate-800">
+                            </label>
+                            <input type="radio" name="medio_contacto" id="mensajes-correo" value="Correo-mensajeria"
+                              class="hidden">
+                          </div>
+                        </div>
+                        <!-- Llamadas -->
+                        <div class="w-full sm:w-auto">
+                          <p class="mb-1 font-semibold text-slate-800">Llamadas:</p>
+                          <div class="flex gap-2 items-center">
+                            <label for="whatsapp-llamada" class="cursor-pointer">
+                              <img src="./img/whatsapp.jpg" alt="WhatsApp Llamada"
+                                class="w-10 h-10 rounded-full border border-slate-800">
+                            </label>
+                            <input type="radio" name="medio_contacto" id="whatsapp-llamada" value="WhatsApp-Llamada"
+                              class="hidden">
+                            <label for="messenger-llamada" class="cursor-pointer">
+                              <img src="./img/messenger.jpg" alt="Messenger Llamada"
+                                class="w-10 h-10 rounded-full border border-slate-800">
+                            </label>
+                            <input type="radio" name="medio_contacto" id="messenger-llamada" value="Messenger-Llamada"
+                              class="hidden">
+                            <label for="llamada" class="cursor-pointer">
+                              <img src="./img/telefono.png" alt="Llamada"
+                                class="w-10 h-10 rounded-full border border-slate-800">
+                            </label>
+                            <input type="radio" name="medio_contacto" id="llamada" value="Llamada" class="hidden">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="robot">
+                      <div class="mb-2">
+                        <label class="block text-gray-700">Selecciona la opción correcta</label>
+                        <span class="block text-gray-700">¿Cuánto es 2 x 2?</span>
+                      </div>
+                      <div class="flex gap-4 items-center">
+                        <div class="flex gap-1 items-center">
+                          <input type="radio" name="robot" id="cuatro" value="4">
+                          <label for="cuatro" class="text-gray-700">4</label>
+                        </div>
+                        <div class="flex gap-1 items-center">
+                          <input type="radio" name="robot" id="dos" value="2">
+                          <label for="dos" class="text-gray-700">2</label>
+                        </div>
+                        <div class="flex gap-1 items-center">
+                          <input type="radio" name="robot" id="cinco" value="5">
+                          <label for="cinco" class="text-gray-700">5</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="text-right">
+                      <input type="submit" value="Contactar profesionista"
+                        class="px-6 py-2 text-white rounded transition bg-slate-800 hover:bg-slate-700">
+                    </div>
+                  </form>
+                </section>
+                <section v-else>
+                  <div class="text-center">
+                    <h2 class="mb-2 text-xl font-bold text-slate-600">
+                      El horario de contratación del experto es de 10:00am - 5:30pm
+                    </h2>
+                    <h3 class="mb-4 text-gray-700">
+                      Si desea contratar el experto o realizar una consulta sin ocupar los 15 minutos de prueba, puede
+                      agendar una cita
+                    </h3>
+                    <!--Disclaimer -->
+                    <p class="text-sm italic text-gray-700 text-end">
+                      *Los expertos pueden tener un horario diferente al de la plataforma
+                    </p>
+                  </div>
+                </section>
+
               </div>
             </section>
-
           </div>
-        </section>
-      </div>
-    </div>
-  </section>
+        </div>
+      </section>
 
-  <hr class="my-8 border-gray-300" />
+      <hr class="my-8 border-gray-300" />
 
     </template>
-   </MainLayout>
+  </MainLayout>
 </template>
 
 
@@ -418,6 +474,11 @@ const props = defineProps({
   dataInfo: {
     type: Object,
     required: true
+  },
+  proffession: {
+    type: String,
+    required: true,
+    default: 'Contador'
   }
 });
 
@@ -456,6 +517,8 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import { addDoc, collection, doc, getDocs, getFirestore, Timestamp, updateDoc } from 'firebase/firestore';
 import DateSquare from '@/components/ExpertoInfoView/DateSquare.vue';
 import AnimationLoadingCircle from '@/animations/AnimationLoadingCircle.vue';
+import clientStore from '@/stores/client';
+import authStore from '@/stores/auth';
 
 
 const date = ref(new Date())
@@ -473,74 +536,74 @@ const disableAllExceptToday = (inputDate: Date) => {
 }
 
 const availableTimeDataExample = [{
-    availableForAppointment: false,
-    weeklySchedule:[
-      {
-        dayInfo:{
-          isDayAvailable: false,
-          day: 'Lunes',
-          availableHours: ['10:30', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
-          hoursTaken: ['10:00', '11:00']
-        }
-      },
-      {
-        dayInfo: {
-          isDayAvailable: false,
-          day: 'Martes',
-          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
-          hoursTaken: ['10:00', '11:00']
-        }
-      },
-      {
-        dayInfo: {
-          isDayAvailable: false,
-          day: 'Miércoles',
-          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
-          hoursTaken: ['14:30', '12:00']
-        }
-      },
-      {
-        dayInfo: {
-          isDayAvailable: false,
-          day: 'Jueves',
-          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
-          hoursTaken: ['10:30', '11:00']
-        }
-      },
-      {
-        dayInfo: {
-          isDayAvailable: false,
-          day: 'Viernes',
-          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
-          hoursTaken: ['10:30', '11:00']
-        }
-      },
-      {
-        dayInfo: {
-          isDayAvailable: false,
-          day: 'Sábado',
-          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
-          hoursTaken: ['10:30', '11:00']
-        }
-      },
-      {
-        dayInfo: {
-          isDayAvailable: false,
-          day: 'Domingo',
-          availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
-          hoursTaken: ['10:00', '11:00']
-        }
+  availableForAppointment: false,
+  weeklySchedule: [
+    {
+      dayInfo: {
+        isDayAvailable: false,
+        day: 'Lunes',
+        availableHours: ['10:30', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+        hoursTaken: ['10:00', '11:00']
       }
-    ],
+    },
+    {
+      dayInfo: {
+        isDayAvailable: false,
+        day: 'Martes',
+        availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+        hoursTaken: ['10:00', '11:00']
+      }
+    },
+    {
+      dayInfo: {
+        isDayAvailable: false,
+        day: 'Miércoles',
+        availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+        hoursTaken: ['14:30', '12:00']
+      }
+    },
+    {
+      dayInfo: {
+        isDayAvailable: false,
+        day: 'Jueves',
+        availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+        hoursTaken: ['10:30', '11:00']
+      }
+    },
+    {
+      dayInfo: {
+        isDayAvailable: false,
+        day: 'Viernes',
+        availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+        hoursTaken: ['10:30', '11:00']
+      }
+    },
+    {
+      dayInfo: {
+        isDayAvailable: false,
+        day: 'Sábado',
+        availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+        hoursTaken: ['10:30', '11:00']
+      }
+    },
+    {
+      dayInfo: {
+        isDayAvailable: false,
+        day: 'Domingo',
+        availableHours: ['10:00', '11:00', '12:00', '13:00', '14:30', '15:00', '16:00', '17:00'],
+        hoursTaken: ['10:00', '11:00']
+      }
+    }
+  ],
 
 }]
 
-const availableTimeData =ref<IDateRoot[]>()
+const availableTimeData = ref<IDateRoot[]>()
 //Function to select the user date and hour
 
 //Firebase Stuff
 const db = getFirestore()
-const collectionDates = collection(db,  `Dates`)
+const collectionDates = collection(db, `Dates`)
 //TODO:Add Interface to it
 
 const isLoading = ref(true)
@@ -554,7 +617,7 @@ const getDates = async () => {
     if (!doc) throw new Error('No se encontró ningún documento en collectionDates');
 
     const data = doc.data() as IDateRoot;
-  console.log(data);
+    console.log(data);
 
     if (!Array.isArray(data.weeklySchedule)) throw new Error('weeklySchedule no es un array');
 
@@ -595,7 +658,7 @@ const getDates = async () => {
   }
 }
 
-onMounted( () => {
+onMounted(() => {
   getDates();
 })
 
@@ -669,13 +732,13 @@ addDoc(collectionMockExperts, {
 const collectionMockExperts = collection(db, 'Experts')
 const addNewDate = async () => {
   try {
-    addDoc(collectionMockExperts,{
+    addDoc(collectionMockExperts, {
       name: 'Luis Ángel',
       email: 'luis.angel@consultagratis.com',
       age: 25,
       active: true,
       createdAt: Timestamp.now(),
-      userId:'123abc',
+      userId: '123abc',
     })
     //Set the document id the same as the userId
     const docRef = doc(collectionMockExperts);
@@ -693,28 +756,28 @@ onMounted(() => {
 })
 
 //Variables to set the user selection
-const userDateSelection  = ref();
+const userDateSelection = ref();
 const userHourSelection = ref();
 const userIndexSelection = ref();
 const userDayNumber = ref();
 const userMonth = ref();
-const newDate = new Date().toLocaleString('es-ES', { month:'long'});
+const newDate = new Date().toLocaleString('es-ES', { month: 'long' });
 //Function to set the user selection (hour, date)
-const getUserSelection = (day,val,index) => {
+const getUserSelection = (day, val, index) => {
 
   userIndexSelection.value = index;
 
   //Set the value as prop
-   availableHours.value = day.dayInfo.hoursTaken;
+  availableHours.value = day.dayInfo.hoursTaken;
   //Verification if user clicks in a different place that is not the permitted area
-    if(val.target.id  != 'hourArea') return;
-    userDateSelection.value = day.dayInfo.day;
-    console.log(userDateSelection.value);
-    userHourSelection.value = val.target.innerText;
-    console.log(userHourSelection.value)
-    userDayNumber.value = day.dayInfo.dayNumber;
-    console.log(val.target.id);
-    userMonth.value = day.dayInfo.monthName;
+  if (val.target.id != 'hourArea') return;
+  userDateSelection.value = day.dayInfo.day;
+  console.log(userDateSelection.value);
+  userHourSelection.value = val.target.innerText;
+  console.log(userHourSelection.value)
+  userDayNumber.value = day.dayInfo.dayNumber;
+  console.log(val.target.id);
+  userMonth.value = day.dayInfo.monthName;
 }
 
 const resetUserSelection = () => {
@@ -728,11 +791,11 @@ const resetUserSelection = () => {
 //Validate user has selected a valid date that is not taken (to see if the hour is available and not as been already taken in the availableHours array)
 
 const validateUserSelection = (data) => {
-  if(!userDateSelection.value || !userHourSelection.value) {
+  if (!userDateSelection.value || !userHourSelection.value) {
     alert('Por favor, selecciona una fecha y hora válida');
     return false;
   }
-  if(data.hoursTaken.includes(userHourSelection.value)) {
+  if (data.hoursTaken.includes(userHourSelection.value)) {
     alert('Por favor, selecciona una hora disponible');
     return false;
   }
@@ -742,42 +805,116 @@ const validateUserSelection = (data) => {
 const availableHours = ref([]);
 
 const arrayToUpdate = ref();
-const scheduleAppointment = async(index:number) => {
-const weeklyScheduleUpdated = JSON.parse(JSON.stringify(availableTimeData.value[0]))
-//Verifying the hour is not already taken
-if(weeklyScheduleUpdated.weeklySchedule[index].dayInfo.hoursTaken.includes(userHourSelection.value)) {
-  alert('Por favor, selecciona una hora disponible');
-  return;
-}
-console.log(weeklyScheduleUpdated); //Now push the hour to the hoursTaken array
 
-if(weeklyScheduleUpdated.weeklySchedule[index].dayInfo.hoursTaken.includes(userHourSelection.value)) {
-  alert('Por favor, selecciona una hora disponible');
-  return;
-}
-weeklyScheduleUpdated.weeklySchedule[index].dayInfo.hoursTaken.push(userHourSelection.value);
+const client = clientStore();
 
-console.log(weeklyScheduleUpdated);
+//Variable to deny the user to schedule an appointment if he has already scheduled one
+const userHasScheduled = ref(false);
+
+
+//Getting the client appointments
+const userAppointmentsFb = ref([]);
+const getClientAppointments = async () => {
+  try {
+    if (client.getClientUid) { //If client is logged in then the expert data could be edited (add date)
+      const clientCollectionFutureAppointments = collection(db, `users/${client.getClientUid}/FutureAppointments`);
+      const querySnapshot = await getDocs(clientCollectionFutureAppointments);
+      console.log('GETTING CLIENT APPOINTMENTS');
+      userAppointmentsFb.value = [];
+      querySnapshot.forEach((doc) => {
+        userAppointmentsFb.value.push({ id: doc.id, ...doc.data() });
+        console.log(doc.data());
+      });
+      if (userAppointmentsFb.value.length > 0) {
+        if (userAppointmentsFb.value.some(e => e.profession === props.profession)) {
+          console.log('User has scheduled an appointment with this expert');
+          userHasScheduled.value = true;
+        }
+      }
+
+    }
+  } catch (error) {
+    console.log(`Error getting client appointments: ${error}`);
+  }
+}
+
+//Getting the client appointments
+onMounted(() => {
+  getClientAppointments();
+})
+
+
+//Add future appointment to the client collection
+const addFutureAppointment = async () => {
+  try {
+    if (client.getClientUid) { //If client is logged in then the expert data could be edited (add date)
+      const clientCollectionFutureAppointments = collection(db, `users/${client.getClientUid}/FutureAppointments`);
+      const FutureAppointment = {
+        day: userDateSelection.value,
+        hour: userHourSelection.value,
+        month: userMonth.value,
+        dayNumber: userDayNumber.value,
+        createdAt: Timestamp.now(),
+        userId: client.getClientUid,
+        proffession: props.proffession,
+      }
+      await addDoc(clientCollectionFutureAppointments, FutureAppointment);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+//Schedule appointment to the expert collection and call addFutureAppointment to add the appointment to the client collection (if user has an appointment scheduled with this expert, do not allow to schedule another one)
+const scheduleAppointment = async (index: number) => {
+
+  if (!authStore().getIsAuth) {
+    alert('Por favor, inicia sesión para continuar');
+    return;
+  }
+  if (userHasScheduled.value) {
+    alert('Ya tiene una cita programada con este experto, no puede programar otra, hasta que no se realice la cita');
+    return;
+  }
+  if (!availableTimeData.value) {
+    alert('No se encontraron datos de citas disponibles');
+    return;
+  }
+  const weeklyScheduleUpdated = JSON.parse(JSON.stringify(availableTimeData.value[0]))
+  //Verifying the hour is not already taken
+  if (weeklyScheduleUpdated.weeklySchedule[index].dayInfo.hoursTaken.includes(userHourSelection.value)) {
+    alert('Por favor, selecciona una hora disponible');
+    return;
+  }
+  console.log(weeklyScheduleUpdated); //Now push the hour to the hoursTaken array
+
+  if (weeklyScheduleUpdated.weeklySchedule[index].dayInfo.hoursTaken.includes(userHourSelection.value)) {
+    alert('Por favor, selecciona una hora disponible');
+    return;
+  }
+  weeklyScheduleUpdated.weeklySchedule[index].dayInfo.hoursTaken.push(userHourSelection.value);
+
+  console.log(weeklyScheduleUpdated);
 
   try {
     //Vaidation goes here
     // Actualizar Firebase
-  arrayToUpdate.value = weeklyScheduleUpdated;
+    arrayToUpdate.value = weeklyScheduleUpdated;
 
-await updateDoc(doc(db, 'Dates/HS3S8Tsu6m7ce3DNtgzi'), {
-  weeklySchedule: arrayToUpdate.value.weeklySchedule
-});
+    await updateDoc(doc(db, 'Dates/HS3S8Tsu6m7ce3DNtgzi'), {
+      weeklySchedule: arrayToUpdate.value.weeklySchedule
+    });
 
-getDates();
- console.log('Appointment scheduled successfully');
+    getDates();
+    console.log('Appointment scheduled successfully');
 
+    addFutureAppointment()
   } catch (error) {
-      console.log(error);
+    console.log(error);
   }
 }
 
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,68 +1,87 @@
 <template>
   <MainLayout>
     <template #main>
-      <div class="flex justify-center">
-
-        <form
-          class="w-fit h-fit flex flex-col items-center justify-center gap-[15px] px-10 pt-[50px] pb-5 bg-white shadow-[0px_106px_42px_rgba(0,0,0,0.01),0px_59px_36px_rgba(0,0,0,0.05),0px_26px_26px_rgba(0,0,0,0.09),0px_7px_15px_rgba(0,0,0,0.1)] rounded-[11px] font-sans">
-
-
-          <div class="flex flex-col items-center justify-center gap-[10px]">
-            <p class="text-lg font-bold text-[#212121] m-0">Inicie sesión en su cuenta</p>
-            <span class="text-[0.725rem] leading-[1.1rem] text-center max-w-[80%] text-[#8B8E98]">
-              Inicie sesión para acceder a su cuenta y disfrutar de la experiencia.
-            </span>
+      <div class="flex justify-center items-center px-4 min-h-screen bg-gradient-to-br from-gray-100 to-white">
+        <form @submit.prevent="login"
+          class="px-8 py-10 space-y-6 w-full max-w-4xl bg-white rounded-2xl border border-gray-100 shadow-lg">
+          <!-- Header -->
+          <div class="space-y-1 text-center">
+            <h1 class="text-2xl font-bold text-sky-800">Inicie sesión en su cuenta</h1>
+            <p class="text-sm text-gray-500">Acceda a su cuenta para continuar la experiencia.</p>
           </div>
 
-          <div class="w-full relative flex flex-col gap-[5px]">
-            <label class="text-xs font-semibold text-[#8B8E98]" for="email_field">Email</label>
-            <svg class="w-5 absolute z-50 left-3 bottom-[9px]">...</svg>
-            <input id="email_field" type="text" placeholder="name@mail.com"
-              class="w-auto h-10 pl-10 rounded-[7px] border border-[#e5e5e5] shadow-[0px_1px_0px_#efefef,0px_1px_0.5px_rgba(239,239,239,0.5)] focus:outline-none focus:border-transparent focus:ring-2 focus:ring-[#242424] transition-all duration-300 ease-[cubic-bezier(0.15,0.83,0.66,1)]" />
+          <!-- Email -->
+          <div>
+            <label for="email" class="block mb-1 text-sm font-medium text-gray-600">Email</label>
+            <div class="relative">
+              <v-icon name="fa-envelope" class="absolute left-3 top-1/2 text-gray-400 -translate-y-1/2" />
+              <input id="email" v-model="email" type="email" placeholder="name@mail.com"
+                class="py-2 pr-4 pl-10 w-full rounded-lg border border-gray-300 transition focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            </div>
           </div>
 
-          <div class="w-full relative flex flex-col gap-[5px]">
-            <label class="text-xs font-semibold text-[#8B8E98]" for="password_field">Password</label>
-            <svg class="w-5 absolute z-50 left-3 bottom-[9px]">...</svg>
-            <input id="password_field" type="password" placeholder="Password"
-              class="w-auto h-10 pl-10 rounded-[7px] border border-[#e5e5e5] shadow-[0px_1px_0px_#efefef,0px_1px_0.5px_rgba(239,239,239,0.5)] focus:outline-none focus:border-transparent focus:ring-2 focus:ring-[#242424] transition-all duration-300 ease-[cubic-bezier(0.15,0.83,0.66,1)]" />
+          <!-- Password -->
+          <div>
+            <label for="password" class="block mb-1 text-sm font-medium text-gray-600">Contraseña</label>
+            <div class="relative">
+              <v-icon name="fa-lock" class="absolute left-3 top-1/2 text-gray-400 -translate-y-1/2" />
+              <input id="password" v-model="password" type="password" placeholder="••••••••"
+                class="py-2 pr-4 pl-10 w-full rounded-lg border border-gray-300 transition focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+            </div>
           </div>
 
-          <button type="submit" class="w-full h-10 bg-[#115DFC] rounded-[7px] text-white cursor-pointer">
-            <span>Sign In</span>
-          </button>
-
-          <div class="w-full flex items-center justify-center gap-[30px] text-[#8B8E98]">
-            <hr class="flex-1 h-px border-0 bg-[#e8e8e8]" />
-            <span>Or</span>
-            <hr class="flex-1 h-px border-0 bg-[#e8e8e8]" />
-          </div>
-
+          <!-- Submit Button -->
           <button type="submit"
-            class="w-full h-10 flex items-center justify-center gap-[10px] bg-white rounded-[7px] border border-[#e5e5e5] shadow-[0px_1px_0px_#efefef,0px_1px_0.5px_rgba(239,239,239,0.5)] text-[#242424] cursor-pointer">
-            <svg class="w-[18px] h-[18px]">...</svg>
-            <span>Sign In with Google</span>
+            class="py-2 w-full font-semibold text-white bg-blue-600 rounded-lg transition hover:bg-blue-700">
+            Iniciar sesión
           </button>
 
-          <button type="submit"
-            class="w-full h-10 flex items-center justify-center gap-[10px] bg-[#212121] rounded-[7px] border border-[#e5e5e5] shadow-[0px_1px_0px_#efefef,0px_1px_0.5px_rgba(239,239,239,0.5)] text-white cursor-pointer">
-            <svg class="w-[16px] h-[20px]">...</svg>
-            <span>Sign In with Apple</span>
-          </button>
+          <!-- Divider -->
+          <div class="flex gap-4 items-center text-sm text-gray-400">
+            <hr class="flex-grow border-gray-200" />
+            <span>O</span>
+            <hr class="flex-grow border-gray-200" />
+          </div>
 
-          <a href="#" class="text-xs text-[#8B8E98] underline">Forgot your password?</a>
+          <!-- Forgot Password -->
+          <div class="text-center">
+            <a href="#" class="text-xs text-blue-500 hover:underline">¿Olvidó su contraseña?</a>
+          </div>
         </form>
-
-
       </div>
+
     </template>
   </MainLayout>
 </template>
 
+
+
 <script lang="ts" setup>
 import MainLayout from '@/layouts/MainLayout.vue';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+import authStore from '@/stores/auth';
+import clientStore from '@/stores/client';
 
+const router = useRouter();
+const email = ref('');
+const password = ref('');
 
+const auth = getAuth();
+const login = async () => {
+  try {
+    const user = await signInWithEmailAndPassword(auth, email.value, password.value);
+    if (user && user.user) {
+      console.log(user);
+      authStore().setIsAuth(true)
+      clientStore().setClientUid(user.user.uid)
+      router.push({ name: 'user' });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 </script>
 
 <style scoped></style>
