@@ -45,11 +45,12 @@
 
           <!-- Forgot Password -->
           <div class="text-center">
-            <a href="#" class="text-xs text-blue-500 hover:underline">¿Olvidó su contraseña?</a>
+            <button type="button" @click.prevent="systemStore().setToggleShowModalResetPassword()"
+              class="text-xs text-blue-500 hover:underline">¿Olvidó su contraseña?</button>
           </div>
         </form>
       </div>
-
+      <RestoreAccount v-if="systemStore().getShowModalResetPassword" />
     </template>
   </MainLayout>
 </template>
@@ -63,19 +64,24 @@ import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import authStore from '@/stores/auth';
 import clientStore from '@/stores/client';
+import systemStore from '@/stores/system';
+import RestoreAccount from '@/components/Login/RestoreAccount.vue';
 
 const router = useRouter();
 const email = ref('');
 const password = ref('');
 
+
 const auth = getAuth();
 const login = async () => {
   try {
     const user = await signInWithEmailAndPassword(auth, email.value, password.value);
-    if (user && user.user) {
+    if (user && user.user && user.user.email) {
       console.log(user);
       authStore().setIsAuth(true)
       clientStore().setClientUid(user.user.uid)
+      //setting user email to pinia
+      systemStore().setUserEmail(user.user.email)
       router.push({ name: 'user' });
     }
   } catch (error) {

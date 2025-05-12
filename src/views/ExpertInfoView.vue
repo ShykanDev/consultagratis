@@ -303,6 +303,7 @@ import authStore from '@/stores/auth';
 import type { IFutureAppointment } from '@/interfaces/IFutureAppointment';
 import { experts } from '@/stores/experts';
 import expertStore from '@/stores/expert';
+import systemStore from '@/stores/system';
 
 
 const date = ref(new Date())
@@ -382,6 +383,8 @@ const availableTimeDataExample = [{
 
 }]
 
+const sysStore = systemStore()
+
 const availableTimeData = ref<IDateRoot[]>()
 //Function to select the user date and hour
 
@@ -435,6 +438,7 @@ const getDates = async () => {
     });
 
     availableTimeData.value = [{ ...data, weeklySchedule: updatedSchedule }];
+    sysStore.setFirebaseData({ ...data, weeklySchedule: updatedSchedule })
     isLoading.value = false
   } catch (error) {
     console.error('Error fetching dates:', error);

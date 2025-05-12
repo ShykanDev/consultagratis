@@ -8,8 +8,9 @@
             <p class="mb-8 text-gray-600">La página funge para realizar de forma rápida y sencilla una comunicación
               directa con profesionales en diferentes áreas. Los cuales pueden proporcionar asesorías y consultas
               eficientes otorgando soluciones a sus requerimientos.</p>
-            <a class="inline-block px-8 py-3 text-white bg-blue-600 rounded-lg transition-colors btn-general hover:bg-blue-700"
-              href="./ver-categorias.php">Ver profesiones</a>
+            <RouterLink
+              class="inline-block px-8 py-3 text-white bg-blue-600 rounded-lg transition-colors btn-general hover:bg-blue-700"
+              to="/expertos">Ver profesiones</RouterLink>
           </div>
 
           <div class="my-16 border-t border-gray-200 separador"></div>
