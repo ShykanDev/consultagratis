@@ -28,7 +28,7 @@
         </section>
 
         <!-- Temporal stylished button to go to expertInfo (routerLink) -->
-        <RouterLink to="/expertoInfo" class="px-4 py-2 font-semibold text-white bg-sky-800 rounded">PREGUNTA A UN
+        <RouterLink to="/contacto" class="px-4 py-2 font-semibold text-white bg-sky-800 rounded">PREGUNTA A UN
           EXPERTO <v-icon class="ml-2" name="md-infooutline" scale="1.2" /></RouterLink>
 
         <!-- Ads Section -->

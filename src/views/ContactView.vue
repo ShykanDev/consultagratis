@@ -12,7 +12,7 @@
             <p class="mb-4 text-slate-700">¿Tiene preguntas? ¿Sugerencias? ¿Comentarios? Redacta tu mensaje.</p>
 
             <div class="flex items-center mb-6 whats-btn">
-              <a href="https://api.whatsapp.com/send?phone=525613742001&text=Hola!%20Quiero%20saber%20más!"
+              <a href="https://api.whatsapp.com/send?phone=525562516687&text=Hola!%20Quiero%20saber%20más!"
                 target="_blank" rel="noopener noreferrer"
                 class="inline-flex items-center px-4 py-2 text-white bg-green-500 rounded transition hover:bg-green-600">
                 <v-icon name="bi-whatsapp" class="mr-2 text-white" scale="1.2" />
@@ -24,11 +24,12 @@
             <p class="mb-4 text-slate-700">Tenemos una sección donde ponemos las preguntas más frecuentes de los
               usuarios
               con sus respuestas.</p>
-            <a class="inline-flex items-center px-6 py-2 text-white bg-blue-600 rounded transition btn-general hover:bg-blue-700"
+            <RouterLink to="/ayuda"
+              class="inline-flex items-center px-6 py-2 text-white bg-blue-600 rounded transition btn-general hover:bg-blue-700"
               href="./ayuda.php">
               <v-icon name="md-contactsupport-round" class="mr-2 text-white" scale="1.2" />
               Ir a la sección de Ayuda
-            </a>
+            </RouterLink>
           </section>
         </div>
 

@@ -1,471 +1,169 @@
 <template>
   <MainLayout>
     <template #main>
+      <!-- Sección principal mejorada -->
+      <section class="py-12 bg-gradient-to-b from-gray-50 to-white">
+        <div class="container px-4 mx-auto max-w-7xl">
+          <div class="p-8 bg-white rounded-xl ring-1 ring-gray-100 shadow-lg">
+            <div class="flex gap-4 items-center mb-6">
+              <v-icon name="bi-person-badge" scale="1.5" class="text-emerald-600" />
+              <div>
+                <h2 class="text-3xl font-semibold font-openSans text-slate-700">{{ expertStore().getExpertArea }}</h2>
+                <p class="flex gap-3 items-center mt-1 text-lg text-gray-600">
+                  <v-icon name="hi-solid-user-circle" class="text-gray-500" />
+                  {{ expertStore().getExpertName }}
+                </p>
+              </div>
+            </div>
 
-      <!-- Sección principal del experto -->
-      <section class="py-8 bg-gray-50">
-        <div class="container px-4 mx-auto">
-          <div class="p-6 bg-white rounded-lg shadow">
-            <h2 class="mb-2 text-2xl font-bold">{{ expertStore().getExpertArea }}</h2>
-
-            <p class="flex gap-2 items-center mb-4 text-gray-700">
-              {{ expertStore().getExpertName }}
-
-            </p>
-
-            <!-- Bloque según la disponibilidad -->
-            <div v-if="isAvailable" class="text-green-600">
-              <p class="flex gap-2 items-center mb-4">
-                <i id="activo" class="animate-spin fas fa-circle-notch"></i>
-                Disponible para prueba gratuita
-              </p>
-              <div class="flex gap-2 items-center">
-                <a :href="freeTrialLink"
-                  class="px-4 py-2 text-white rounded transition btn-secundario bg-slate-800 hover:bg-slate-700">
-                  Crear contacto
+            <!-- Estado de disponibilidad mejorado -->
+            <div v-if="isAvailable" class="p-6 bg-emerald-50 rounded-lg">
+              <div class="flex flex-col gap-4 items-start md:flex-row md:items-center">
+                <div class="flex gap-3 items-center">
+                  <v-icon name="bi-check-circle" class="text-2xl text-emerald-600 animate-pulse" />
+                  <span class="text-lg font-semibold text-emerald-700">Disponible para prueba gratuita</span>
+                </div>
+                <a href="#"
+                  class="flex items-center px-6 py-3 space-x-2 font-medium text-white bg-emerald-600 rounded-xl transition-all transform hover:bg-emerald-700 hover:shadow-lg">
+                  <v-icon name="bi-calendar-plus" class="text-lg" />
+                  <span>Agendar prueba gratuita</span>
                 </a>
-                <section class="bg-slate-300">
-
-                </section>
               </div>
             </div>
 
-            <div v-else class="flex flex-col items-start md:flex-row md:justify-between md:items-center">
-              <div class="mb-4 md:mb-0">
-                <p class="text-gray-600">Seleccione un horario disponible:</p>
-              </div>
-
-              <section v-if="clientStore().getClientUid && userAppointmentsFb.length > 0">
-                <div
-                  class="flex flex-col gap-4 justify-between items-center p-6 mx-7 my-6 text-white bg-gradient-to-tr from-emerald-600 to-emerald-700 rounded-2xl shadow-lg animate-fade-up md:flex-row">
-                  <h2 class="text-2xl font-semibold font-openSans">Usted tiene una cita para el día {{
-                    userAppointmentsFb[0].day }} {{ userAppointmentsFb[0].dayNumber }} {{ userAppointmentsFb[0].month }}
-                    del {{ userAppointmentsFb[0].year }}
-                  </h2>
-                  <div class="flex flex-col gap-2 items-center">
-
-                    <RouterLink :to="{ name: 'user' }"
-                      class="p-2 font-medium text-emerald-800 bg-white rounded-xl hover:underline">
-                      Ver citas
-                    </RouterLink>
-                  </div>
+            <!-- Sección de citas existentes -->
+            <section v-if="clientStore().getClientUid && userAppointmentsFb.length > 0"
+              class="mt-6 bg-indigo-50 rounded-xl border border-indigo-600">
+              <div class="flex flex-col gap-4 items-center p-6 md:flex-row">
+                <div class="flex gap-3 items-center">
+                  <v-icon name="bi-calendar2-check" class="text-2xl text-indigo-600" />
+                  <h3 class="text-lg font-semibold text-indigo-900">
+                    Usted tiene una cita programada: {{ userAppointmentsFb[0].day }} {{ userAppointmentsFb[0].dayNumber
+                    }}
+                    {{ userAppointmentsFb[0].month }} {{ userAppointmentsFb[0].year }}
+                  </h3>
                 </div>
-              </section>
-            </div>
-          </div>
-          <div>
-          </div>
-          <!-- Loading Animation -->
-          <section v-if="isLoading" class="flex justify-center items-center">
-            <AnimationLoadingCircle />
-          </section>
-          <section v-if="availableTimeData && availableTimeData.length > 0" class="grid grid-cols-7 py-3">
-            <div v-for="(day, index) in availableTimeData[0].weeklySchedule" :key="index" class="animate-fade-up"
-              :style="{ animationDelay: `${index * 100}ms` }">
-              <DateSquare @click="getUserSelection(day, $event, index)" :day-info="day.dayInfo"
-                :available-for-appointment="day.dayInfo.isDayAvailable" :available-hours="day.dayInfo.availableHours"
-                :hours-taken="day.dayInfo.hoursTaken" :selected-day="userDateSelection"
-                :selected-hour="userHourSelection" />
-            </div>
-          </section>
-
-        </div>
-      </section>
-
-      <!--Section to show the user next date if exists (v-if) -->
-
-
-
-      <article class="px-4 w-full">
-        <div v-if="userDateSelection && userHourSelection"
-          class="flex flex-col gap-4 justify-between items-center p-6 rounded-2xl shadow-lg animate-fade-up md:flex-row bg-slate-800">
-          <h3 class="flex gap-3 items-center text-lg font-semibold text-white md:text-2xl">
-            <v-icon name="bi-calendar2-week-fill" scale="1.5" class="text-white" />
-            <span class="flex-1">
-              Agendar cita para el
-              <span class="text-slate-100"><span
-                  class="px-1 py-1 italic font-black bg-white rounded-md shadow-sm text-slate-900 animate-fade"
-                  :key="userDateSelection">{{ userDateSelection }} {{ userDayNumber }} </span> de {{ userMonth }} del {{
-                    new Date().getFullYear() }}</span>
-
-              a las
-              <span
-                class="inline-block px-2 py-1 mx-1 font-black italic bg-white rounded-md shadow-sm text-slate-900 font-sarabun animate-fade animate-delay-[350ms]"
-                :key="userHourSelection">{{ userHourSelection }}</span> horas
-            </span>
-          </h3>
-          <button @click="scheduleAppointment(userIndexSelection)"
-            class="flex items-center px-4 py-2 font-semibold bg-white rounded-xl shadow-md transition text-slate-800 hover:bg-slate-100">
-            <v-icon name="md-addalert" scale="1.5" class="text-slate-800" />
-            Agendar Cita
-          </button>
-        </div>
-        <section v-if="userDateSelection && userHourSelection"
-          class="p-8 mx-auto my-4 max-w-7xl bg-white rounded-xl border border-sky-600 shadow-lg">
-          <div class="flex items-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3 w-8 h-8 text-rose-600" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
-            <h2 class="text-2xl font-bold text-gray-800">Formulario de Consulta</h2>
-          </div>
-
-          <!-- Textarea con estilo moderno -->
-          <div class="mb-6">
-            <div class="flex justify-between items-center mb-2">
-              <label for="consulta" class="block text-sm font-medium text-gray-700">Describe tu consulta</label>
-              <span class="text-xs text-gray-500">Máx. 500 caracteres</span>
-            </div>
-            <div class="relative">
-              <textarea id="consulta" name="consulta" rows="5" maxlength="500"
-                class="px-4 py-3 w-full rounded-lg border border-gray-200 shadow-sm transition-all duration-200 resize-none focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                placeholder="Por favor, describe detalladamente tu consulta..."></textarea>
-              <div class="absolute right-3 bottom-3 text-xs text-gray-400">
-                <span id="char-count">0</span>/500
-              </div>
-            </div>
-          </div>
-
-          <!-- Campo de archivo moderno -->
-          <div class="mb-6">
-            <label class="block mb-2 text-sm font-medium text-gray-700">Adjuntar archivo</label>
-            <div class="flex justify-center items-center w-full">
-              <label
-                class="flex flex-col w-full h-32 rounded-xl border-2 border-gray-300 border-dashed transition duration-300 cursor-pointer hover:border-rose-400">
-                <div class="flex flex-col justify-center items-center pt-7">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-400 group-hover:text-rose-600"
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                  </svg>
-                  <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-rose-600">
-                    Haga click para seleccionar
-                  </p>
-                  <p class="mt-2 text-xs text-gray-400">Formatos soportados: PDF, JPG, PNG (Max. 5MB)</p>
-                </div>
-                <input type="file" class="absolute opacity-0" />
-              </label>
-            </div>
-          </div>
-
-          <!-- Disclaimer importante -->
-          <div class="p-4 mb-6 bg-rose-50 rounded-r-lg border-l-4 border-rose-400">
-            <div class="flex">
-              <div class="flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-sky-600" viewBox="0 0 20 20"
-                  fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                    clip-rule="evenodd" />
-                </svg>
-              </div>
-              <div class="ml-3">
-                <h3 class="text-sm font-medium text-rose-800">Política importante</h3>
-                <div class="mt-2 text-xl text-rose-700">
-                  <p>
-                    Por favor, no incluya datos de contacto (teléfonos, emails, redes sociales) en tu consulta.
-                    Compartir información para realizar tratos fuera de nuestra plataforma infringe nuestros
-                    <a href="#" class="font-medium underline hover:text-rose-600">Términos y Condiciones</a>
-                    y podría resultar en la eliminación de tu cuenta. Agradecemos tu comprensión y cooperación.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Botón de enviar con icono -->
-          <button type="submit"
-            class="w-full flex items-center justify-center bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white font-medium py-3 px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-[1.02]">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
-                clip-rule="evenodd" />
-            </svg>
-            Enviar consulta
-          </button>
-        </section>
-      </article>
-
-      <section>
-
-      </section>
-
-      <!-- Sección de descripción -->
-      <section class="py-6 bg-white">
-        <div class="container px-4 mx-auto">
-          <p class="text-gray-800">{{ description }}</p>
-        </div>
-      </section>
-
-      <section>
-
-      </section>
-      <hr class="my-8 border-gray-300" />
-
-      <!-- Sección de servicios y formulario -->
-      <section class="container px-4 pb-8 mx-auto">
-        <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          <!-- Descripción de servicios -->
-          <div>
-            <h2 class="mb-4 text-2xl font-bold">¿En qué puede ayudar el profesionista/experto?</h2>
-            <div class="grid grid-cols-2 gap-4">
-              <ul class="space-y-3">
-                <li v-for="(item, index) in offersLeft" :key="index" class="flex gap-2 items-start">
-                  <i :class="[item.icon, 'text-slate-800']"></i>
-                  <span class="text-gray-700">{{ item.text }}</span>
-                </li>
-              </ul>
-              <ul class="space-y-3">
-                <li v-for="(item, index) in offersRight" :key="index" class="flex gap-2 items-start">
-                  <i :class="[item.icon, 'text-slate-800']"></i>
-                  <span class="text-gray-700">{{ item.text }}</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Formulario -->
-          <div>
-            <section id="ancla-consulta">
-              <div class="p-6 bg-gray-50 rounded-lg shadow">
-                <section v-if="isAvailable">
-                  <form :action="formAction" method="post" enctype="multipart/form-data" class="space-y-4">
-                    <h2 class="text-xl font-semibold text-center text-slate-800">
-                      Complete el formulario para contactar al profesionista
-                    </h2>
-
-                    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                      <div>
-                        <label for="nombre" class="block text-gray-700">Nombre:</label>
-                        <input
-                          class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
-                          type="text" name="nombre" id="nombre" placeholder="Con quien nos pondremos en contacto"
-                          required>
-                      </div>
-                      <div>
-                        <label for="apellidos" class="block text-gray-700">Apellidos:</label>
-                        <input
-                          class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
-                          type="text" name="apellidos" id="apellidos" placeholder="Sus apellidos" required>
-                      </div>
-                      <div>
-                        <label for="correo" class="block text-gray-700">Correo electrónico:</label>
-                        <input
-                          class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
-                          type="email" name="email" id="correo" placeholder="A este correo responderemos" required>
-                      </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                      <div>
-                        <label for="tel" class="block text-gray-700">Teléfono:</label>
-                        <input
-                          class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
-                          type="tel" name="telefono" id="tel" placeholder="(55)55-55-55-55" required>
-                      </div>
-                      <div>
-                        <label for="experto" class="block text-gray-700">Tipo de Experto</label>
-                        <select
-                          class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
-                          name="experto" id="experto" required>
-                          <option :selected="true" :value="expertType">{{ expertType }}</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label for="motivo" class="block text-gray-700">Motivo del contacto</label>
-                        <select
-                          class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
-                          name="motivo" id="motivo" required>
-                          <option selected disabled value="">Seleccionar</option>
-                          <option value="Contratar">Contratar</option>
-                          <option value="Ayuda">Ayuda</option>
-                          <option value="Pregunta Rápida">Pregunta Rápida</option>
-                          <option value="Asesoría">Asesoría</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <strong class="block mb-2 text-gray-700">Se requiere fecha de nacimiento para verificar mayoría de
-                        edad</strong>
-                      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                        <div>
-                          <label for="dia-na" class="block text-gray-700">Día:</label>
-                          <input
-                            class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
-                            type="number" name="dia_na" id="dia-na" min="1" max="31" placeholder="3">
-                        </div>
-                        <div>
-                          <label for="mes-na" class="block text-gray-700">Mes:</label>
-                          <select
-                            class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
-                            name="mes_na" id="mes-na">
-                            <option value="Enero">Enero</option>
-                            <option value="Febrero">Febrero</option>
-                            <option value="Marzo">Marzo</option>
-                            <option value="Abril">Abril</option>
-                            <option value="Mayo">Mayo</option>
-                            <option value="Junio">Junio</option>
-                            <option value="Julio">Julio</option>
-                            <option value="Agosto">Agosto</option>
-                            <option value="Septiembre">Septiembre</option>
-                            <option value="Octubre">Octubre</option>
-                            <option :selected="defaultMonth === 'Noviembre'" value="Noviembre">Noviembre</option>
-                            <option value="Diciembre">Diciembre</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label for="anio-na" class="block text-gray-700">Año:</label>
-                          <input
-                            class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
-                            type="number" name="anio_na" id="anio-na" placeholder="1997">
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label for="mensaje" class="block text-gray-700">Escriba de la forma más breve el
-                        requerimiento:</label>
-                      <textarea
-                        class="p-2 w-full rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-slate-800"
-                        name="mensaje" id="mensaje" rows="3"></textarea>
-                    </div>
-
-                    <!-- Medios de contacto -->
-                    <div>
-                      <label class="block mb-2 text-gray-700">Seleccione el medio de contacto que quisiera tener con el
-                        experto</label>
-                      <div class="flex flex-wrap gap-4">
-                        <!-- Videollamada -->
-                        <div class="w-full sm:w-auto">
-                          <p class="mb-1 font-semibold text-slate-800">Videollamada:</p>
-                          <div class="flex gap-2 items-center">
-                            <label for="meet" class="cursor-pointer">
-                              <img src="./img/meet.jpg" alt="Google Meet"
-                                class="w-10 h-10 rounded-full border border-slate-800">
-                            </label>
-                            <input type="radio" name="medio_contacto" id="meet" value="Google Meet" class="hidden">
-                            <label for="zoom" class="cursor-pointer">
-                              <img src="./img/zoom.png" alt="Zoom"
-                                class="w-10 h-10 rounded-full border border-slate-800">
-                            </label>
-                            <input type="radio" name="medio_contacto" id="zoom" value="Zoom" class="hidden">
-                            <label for="whatsapp-videollamada" class="cursor-pointer">
-                              <img src="./img/whatsapp.jpg" alt="WhatsApp Videollamada"
-                                class="w-10 h-10 rounded-full border border-slate-800">
-                            </label>
-                            <input type="radio" name="medio_contacto" id="whatsapp-videollamada"
-                              value="WhatsApp-Videollamada" class="hidden">
-                            <label for="messenger-videollamada" class="cursor-pointer">
-                              <img src="./img/messenger.jpg" alt="Messenger Videollamada"
-                                class="w-10 h-10 rounded-full border border-slate-800">
-                            </label>
-                            <input type="radio" name="medio_contacto" id="messenger-videollamada"
-                              value="Messenger-Videollamada" class="hidden">
-                          </div>
-                        </div>
-                        <!-- Mensajería -->
-                        <div class="w-full sm:w-auto">
-                          <p class="mb-1 font-semibold text-slate-800">Mensajería:</p>
-                          <div class="flex gap-2 items-center">
-                            <label for="whatsapp-mensajeria" class="cursor-pointer">
-                              <img src="./img/whatsapp.jpg" alt="WhatsApp Mensajería"
-                                class="w-10 h-10 rounded-full border border-slate-800">
-                            </label>
-                            <input type="radio" name="medio_contacto" id="whatsapp-mensajeria"
-                              value="WhatsApp-Mensajeria" class="hidden">
-                            <label for="messenger-mensajeria" class="cursor-pointer">
-                              <img src="./img/messenger.jpg" alt="Messenger Mensajería"
-                                class="w-10 h-10 rounded-full border border-slate-800">
-                            </label>
-                            <input type="radio" name="medio_contacto" id="messenger-mensajeria"
-                              value="Messenger-Mensajeria" class="hidden">
-                            <label for="mensajes-correo" class="cursor-pointer">
-                              <img src="./img/correo.png" alt="Correo"
-                                class="w-10 h-10 rounded-full border border-slate-800">
-                            </label>
-                            <input type="radio" name="medio_contacto" id="mensajes-correo" value="Correo-mensajeria"
-                              class="hidden">
-                          </div>
-                        </div>
-                        <!-- Llamadas -->
-                        <div class="w-full sm:w-auto">
-                          <p class="mb-1 font-semibold text-slate-800">Llamadas:</p>
-                          <div class="flex gap-2 items-center">
-                            <label for="whatsapp-llamada" class="cursor-pointer">
-                              <img src="./img/whatsapp.jpg" alt="WhatsApp Llamada"
-                                class="w-10 h-10 rounded-full border border-slate-800">
-                            </label>
-                            <input type="radio" name="medio_contacto" id="whatsapp-llamada" value="WhatsApp-Llamada"
-                              class="hidden">
-                            <label for="messenger-llamada" class="cursor-pointer">
-                              <img src="./img/messenger.jpg" alt="Messenger Llamada"
-                                class="w-10 h-10 rounded-full border border-slate-800">
-                            </label>
-                            <input type="radio" name="medio_contacto" id="messenger-llamada" value="Messenger-Llamada"
-                              class="hidden">
-                            <label for="llamada" class="cursor-pointer">
-                              <img src="./img/telefono.png" alt="Llamada"
-                                class="w-10 h-10 rounded-full border border-slate-800">
-                            </label>
-                            <input type="radio" name="medio_contacto" id="llamada" value="Llamada" class="hidden">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="robot">
-                      <div class="mb-2">
-                        <label class="block text-gray-700">Selecciona la opción correcta</label>
-                        <span class="block text-gray-700">¿Cuánto es 2 x 2?</span>
-                      </div>
-                      <div class="flex gap-4 items-center">
-                        <div class="flex gap-1 items-center">
-                          <input type="radio" name="robot" id="cuatro" value="4">
-                          <label for="cuatro" class="text-gray-700">4</label>
-                        </div>
-                        <div class="flex gap-1 items-center">
-                          <input type="radio" name="robot" id="dos" value="2">
-                          <label for="dos" class="text-gray-700">2</label>
-                        </div>
-                        <div class="flex gap-1 items-center">
-                          <input type="radio" name="robot" id="cinco" value="5">
-                          <label for="cinco" class="text-gray-700">5</label>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="text-right">
-                      <input type="submit" value="Contactar profesionista"
-                        class="px-6 py-2 text-white rounded transition bg-slate-800 hover:bg-slate-700">
-                    </div>
-                  </form>
-                </section>
-                <section v-else>
-                  <div class="text-center">
-                    <h2 class="mb-2 text-xl font-bold text-slate-600">
-                      El horario de contratación del experto es de 10:00am - 5:30pm
-                    </h2>
-                    <h3 class="mb-4 text-gray-700">
-                      Si desea contratar el experto o realizar una consulta sin ocupar los 15 minutos de prueba, puede
-                      agendar una cita
-                    </h3>
-                    <!--Disclaimer -->
-                    <p class="text-sm italic text-gray-700 text-end">
-                      *Los expertos pueden tener un horario diferente al de la plataforma
-                    </p>
-                  </div>
-                </section>
-
+                <RouterLink :to="{ name: 'user' }"
+                  class="flex items-center px-4 py-2 space-x-2 text-indigo-700 bg-white rounded-lg shadow-sm">
+                  <v-icon name="bi-eye" />
+                  <span>Ver detalles</span>
+                </RouterLink>
               </div>
             </section>
           </div>
+
+          <!-- Selector de horarios mejorado -->
+          <section v-if="availableTimeData && availableTimeData.length > 0"
+            class="p-6 mt-8 bg-white rounded-xl ring-1 ring-gray-100 shadow-lg">
+            <h3 class="flex gap-2 items-center mb-6 text-xl font-semibold text-gray-900">
+              <v-icon name="bi-clock-history" class="text-gray-600" />
+              Seleccione su horario preferido
+            </h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-7">
+              <div v-for="(day, index) in availableTimeData[0].weeklySchedule" :key="index" class="animate-fade-up"
+                :style="{ animationDelay: `${index * 100}ms` }">
+                <DateSquare @click="getUserSelection(day, $event, index)" :day-info="day.dayInfo"
+                  :available-for-appointment="day.dayInfo.isDayAvailable" :available-hours="day.dayInfo.availableHours"
+                  :hours-taken="day.dayInfo.hoursTaken" :selected-day="userDateSelection"
+                  :selected-hour="userHourSelection" />
+              </div>
+            </div>
+          </section>
+
+          <!-- Confirmación de cita mejorada -->
+          <article v-if="userDateSelection && userHourSelection"
+            class="mt-8 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-xl">
+            <div class="flex flex-col gap-6 items-center p-8 md:flex-row">
+              <div class="flex-1">
+                <h3 class="flex gap-3 items-center text-2xl font-semibold text-white">
+                  <v-icon name="bi-calendar2-event" class="text-white" />
+                  <span>
+                    Confirmación de cita -
+                    <span class="font-bold">{{ userDateSelection }} {{ userDayNumber }}</span>
+                    a las <span class="font-mono">{{ userHourSelection }}</span>
+                  </span>
+                </h3>
+                <p class="mt-2 text-blue-100">
+                  Por favor revise los detalles antes de confirmar
+                </p>
+              </div>
+              <button @click="scheduleAppointment(userIndexSelection)"
+                class="flex items-center px-8 py-3 space-x-2 font-semibold text-blue-900 bg-white rounded-xl transition-all hover:bg-blue-50">
+                <v-icon name="bi-send-check" class="text-blue-600" />
+                <span>Confirmar cita</span>
+              </button>
+            </div>
+          </article>
         </div>
       </section>
 
-      <hr class="my-8 border-gray-300" />
+      <!-- Sección de formulario mejorada -->
+      <section class="py-12 bg-gray-50">
+        <div class="container px-4 mx-auto max-w-7xl">
+          <div class="grid gap-8 lg:grid-cols-2">
+            <!-- Servicios mejorados -->
+            <div class="p-8 bg-white rounded-xl ring-1 ring-gray-100 shadow-lg">
+              <h2 class="flex gap-2 items-center mb-6 text-2xl font-bold text-gray-900">
+                <v-icon name="bi-patch-question" class="text-blue-600" />
+                Servicios profesionales
+              </h2>
+              <div class="grid gap-6 md:grid-cols-2">
+                <div v-for="(item, index) in offersLeft" :key="index"
+                  class="flex gap-3 items-start p-4 bg-gray-50 rounded-lg">
+                  <v-icon :name="item.icon" class="flex-shrink-0 mt-1 text-blue-600" />
+                  <p class="leading-relaxed text-gray-700">{{ item.text }}</p>
+                </div>
+              </div>
+            </div>
 
+            <!-- Formulario de contacto mejorado -->
+            <div class="p-8 bg-white rounded-xl ring-1 ring-gray-100 shadow-lg">
+              <div class="flex gap-3 items-center mb-8">
+                <v-icon name="bi-chat-dots" class="text-2xl text-emerald-600" />
+                <h2 class="text-2xl font-bold text-gray-900">Formulario de contacto</h2>
+              </div>
+
+              <!-- Sección de adjuntos mejorada -->
+              <div class="mb-8">
+                <label class="block mb-4 text-lg font-medium text-gray-700">
+                  <v-icon name="bi-paperclip" class="mr-2" />
+                  Adjuntar documentos
+                </label>
+                <div
+                  class="relative rounded-xl border-2 border-gray-300 border-dashed transition-colors hover:border-emerald-500">
+                  <input type="file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                  <div class="flex flex-col justify-center items-center p-8 text-center">
+                    <v-icon name="bi-cloud-upload" class="mb-4 text-4xl text-gray-400" />
+                    <p class="text-gray-500">Arrastra archivos o haz clic para subir</p>
+                    <p class="mt-2 text-sm text-gray-400">Formatos soportados: PDF, JPG, PNG (hasta 5MB)</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Políticas mejoradas -->
+              <div class="p-4 mb-8 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+                <div class="flex gap-3 items-start">
+                  <v-icon name="bi-info-circle" class="flex-shrink-0 mt-1 text-blue-500" />
+                  <div>
+                    <h3 class="text-lg font-semibold text-blue-800">Política de privacidad</h3>
+                    <p class="mt-2 text-blue-700">
+                      Su información está protegida bajo nuestra política de seguridad. No compartimos datos personales
+                      con terceros.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botón de envío mejorado -->
+              <button type="submit"
+                class="flex gap-2 justify-center items-center px-8 py-4 w-full text-lg font-semibold text-white bg-emerald-600 rounded-xl transition-all transform hover:bg-emerald-700 hover:shadow-lg">
+                <v-icon name="bi-send" class="text-xl" />
+                Enviar solicitud
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
     </template>
   </MainLayout>
 </template>

@@ -23,8 +23,10 @@
               <p class="mb-4 text-lg text-gray-700">Tienes un contacto directo con nosotros para cualquier duda, consejo
                 o reclamo</p>
               <div class="my-2 text-center centrar-texto">
-                <a class="inline-block px-6 py-3 text-white bg-blue-600 rounded-full transition btn-general hover:bg-blue-700"
-                  href="./contacto.php">Contactar</a>
+                <RouterLink to="/contacto"
+                  class="inline-block px-6 py-3 text-white bg-blue-600 rounded transition btn-general hover:bg-blue-700">
+                  Contactar
+                </RouterLink>
               </div>
             </div>
           </div>

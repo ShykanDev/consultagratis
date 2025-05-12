@@ -116,7 +116,12 @@
             Ya tiene una cuenta?
             <a href="#" class="font-semibold text-blue-600 hover:underline">Iniciar sesión</a>
           </p>
+          <p v-if="isMinor" class="mt-4 text-lg font-semibold text-center text-red-600">
+            No se permite el acceso a menores de edad
+          </p>
+
         </form>
+
       </div>
 
 
