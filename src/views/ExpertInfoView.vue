@@ -6,15 +6,11 @@
       <section class="py-8 bg-gray-50">
         <div class="container px-4 mx-auto">
           <div class="p-6 bg-white rounded-lg shadow">
-            <h2 class="mb-2 text-2xl font-bold">{{ title }}</h2>
-            <p class="mb-1 text-gray-700">
-              Área: <span class="font-medium">{{ area }}</span>
-              <i :class="[areaIcon, 'text-slate-800 ml-1']"></i>
-            </p>
+            <h2 class="mb-2 text-2xl font-bold">{{ expertStore().getExpertArea }}</h2>
+
             <p class="flex gap-2 items-center mb-4 text-gray-700">
-              <i class="fas fa-calendar-alt text-slate-800"></i>
-              {{ availableDayFull }} {{ availableHourStart }}:00am -
-              {{ availableHourEnd }}:00pm
+              {{ expertStore().getExpertName }}
+
             </p>
 
             <!-- Bloque según la disponibilidad -->
@@ -36,8 +32,7 @@
 
             <div v-else class="flex flex-col items-start md:flex-row md:justify-between md:items-center">
               <div class="mb-4 md:mb-0">
-
-                <p class="text-gray-600">Puede contratar al experto aquí</p>
+                <p class="text-gray-600">Seleccione un horario disponible:</p>
               </div>
 
               <section v-if="clientStore().getClientUid && userAppointmentsFb.length > 0">
@@ -106,7 +101,7 @@
           </button>
         </div>
         <section v-if="userDateSelection && userHourSelection"
-          class="p-8 mx-auto my-4 max-w-7xl bg-white bg-sky-50 rounded-xl border border-sky-600 shadow-lg">
+          class="p-8 mx-auto my-4 max-w-7xl bg-white rounded-xl border border-sky-600 shadow-lg">
           <div class="flex items-center mb-6">
             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3 w-8 h-8 text-rose-600" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
@@ -477,14 +472,21 @@
 
 
 <script setup lang="ts">
-import { computed, onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive, } from 'vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 
 import { ref } from 'vue';
 import type { IDateRoot } from '@/interfaces/IDateRoot';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+
+//Pinia (props)
+const expertsStore = experts();
 
 
+console.log(route.params.name);
 const props = defineProps({
   title: {
     type: String,
@@ -505,18 +507,6 @@ const props = defineProps({
   availableHourEnd: {
     type: Number,
     default: 14
-  },
-  freeTrialLink: {
-    type: String,
-    default: './c-contadores.php#ancla-consulta'
-  },
-  hireLink: {
-    type: String,
-    default: './citas.php'
-  },
-  formAction: {
-    type: String,
-    default: 'enviar-correo.php'
   },
   expertType: {
     type: String,
@@ -563,10 +553,6 @@ const props = defineProps({
       { name: 'Servicios Web', link: './c-web.php', active: false },
       { name: 'Traductor', link: './c-traductores.php', active: false }
     ]
-  },
-  defaultMonth: {
-    type: String,
-    default: 'Noviembre'
   },
   dataInfo: {
     type: Object,
@@ -617,6 +603,8 @@ import AnimationLoadingCircle from '@/animations/AnimationLoadingCircle.vue';
 import clientStore from '@/stores/client';
 import authStore from '@/stores/auth';
 import type { IFutureAppointment } from '@/interfaces/IFutureAppointment';
+import { experts } from '@/stores/experts';
+import expertStore from '@/stores/expert';
 
 
 const date = ref(new Date())

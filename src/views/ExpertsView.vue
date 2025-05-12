@@ -15,7 +15,7 @@
             </a>
           </div>
         </section>
-
+        <!--Setting a different name for each expert-->
         <!-- Video & Sobre Nosotros -->
         <section class="py-16">
           <div class="container flex flex-col gap-12 items-center px-6 mx-auto md:flex-row">
@@ -50,9 +50,11 @@
                   <p class="mb-4 text-gray-600">
                     Facilitamos el intercambio de bienes y servicios a nivel internacional con normativas seguras.
                   </p>
-                  <a href="./c-comercio.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Luis Ángel Suárez', 'Importación y Exportación', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'importacion-y-exportacion' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card 2 -->
@@ -63,9 +65,11 @@
                   <p class="mb-4 text-gray-600">
                     Abogados expertos para ofrecer asesoría y representación en procesos judiciales y administrativos.
                   </p>
-                  <a href="./c-abogados.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Mario López Gómez', 'Asesorías Legales', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'asesorias-legales' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card 3 -->
@@ -76,9 +80,11 @@
                   <p class="mb-4 text-gray-600">
                     Profesionales de la salud comprometidos en atender tus necesidades médicas de forma personalizada.
                   </p>
-                  <a href="./c-doctores.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Luis Ángel Suárez', 'Médico', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'medico' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
             </div>
@@ -99,9 +105,11 @@
                   <p class="mb-4 text-gray-600">
                     Expertos en contabilidad para gestionar tus finanzas de forma precisa y confiable.
                   </p>
-                  <a href="./c-contadores.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Angela Ruiz Martinez', 'Contador', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'contador' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card: Arquitecto -->
@@ -113,9 +121,11 @@
                   <p class="mb-4 text-gray-600">
                     Diseño y planificación de espacios con profesionalismo y creatividad.
                   </p>
-                  <a href="./c-arquitectos.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Alberto Jimenez Castro', 'Arquitecto', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'arquitecto' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card: Servicios Web -->
@@ -127,9 +137,11 @@
                   <p class="mb-4 text-gray-600">
                     Desarrollo de soluciones digitales a medida para potenciar tu presencia online.
                   </p>
-                  <a href="./c-web.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Carlos Ignacio Beltrán', 'Servicios Web', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'servicios-web' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card: Publicidad -->
@@ -141,9 +153,11 @@
                   <p class="mb-4 text-gray-600">
                     Estrategias creativas para difundir y potenciar la imagen de tu marca.
                   </p>
-                  <a href="./c-publicidad.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Bryan Juarez Mendoza', 'Publicidad', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'publicidad' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card: Traductores -->
@@ -155,9 +169,11 @@
                   <p class="mb-4 text-gray-600">
                     Especialistas en comunicación multilingüe para romper barreras idiomáticas.
                   </p>
-                  <a href="./c-traductores.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Luis Miguel Acosta', 'Traductores', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'traductores' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card: Peritaje -->
@@ -169,9 +185,11 @@
                   <p class="mb-4 text-gray-600">
                     Evaluaciones técnicas y profesionales con rigor y precisión.
                   </p>
-                  <a href="./c-peritaje.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Roberto Gutierrez Olguín', 'Peritaje', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'peritaje' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card: Ingeniería en Computación -->
@@ -184,9 +202,11 @@
                   <p class="mb-4 text-gray-600">
                     Innovación tecnológica y desarrollo de sistemas a la vanguardia.
                   </p>
-                  <a href="./c-computacion.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Dana Mora Durán', 'Ingeniería en Computación', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'ingenieria-en-computacion' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card: Gestoría en Trámites -->
@@ -199,9 +219,11 @@
                   <p class="mb-4 text-gray-600">
                     Optimiza tus gestiones administrativas con asesorías especializadas.
                   </p>
-                  <a href="./c-gestorias.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Rodrigo Vallencia Mendoza', 'Gestoría en Trámites', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'gestoria-en-tramites' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card: Marketing -->
@@ -213,9 +235,11 @@
                   <p class="mb-4 text-gray-600">
                     Conecta con tu audiencia a través de estrategias innovadoras y efectivas.
                   </p>
-                  <a href="./c-marketing.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Jorge Salinas Gutierrez ', 'Marketing', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'marketing' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card: Abogado -->
@@ -228,9 +252,11 @@
                     Conecta con un abogado especializado para recibir asesoría legal directa y resolver tus asuntos
                     jurídicos.
                   </p>
-                  <a href="./c-abogado.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Miguel Hernandez Campos', 'Abogado', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'abogado' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card: Psicología -->
@@ -242,9 +268,11 @@
                   <p class="mb-4 text-gray-600">
                     Asesoría psicológica para resolver tus dudas y resolver tus problemas.
                   </p>
-                  <a href="./c-psicologia.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Gabriel Navarro Valdez', 'Psicólogo/a', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'psicologia' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card: Maestro -->
@@ -256,9 +284,11 @@
                   <p class="mb-4 text-gray-600">
                     Asesoría educativa para resolver tus dudas y resolver tus problemas.
                   </p>
-                  <a href="./c-maestro.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Emilio Soto Ruíz', 'Maestro', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'maestro' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
               <!-- Card: Chef -->
@@ -270,9 +300,11 @@
                   <p class="mb-4 text-gray-600">
                     Asesoría culinaria para resolver tus dudas y resolver tus problemas.
                   </p>
-                  <a href="./c-chef.php" class="font-medium text-blue-600 hover:underline">
+                  <RouterLink @click="setUserStore('Emilio Florez García', 'Chef', '003123')"
+                    :to="{ name: 'expertInfo', params: { name: 'chef' } }"
+                    class="font-medium text-blue-600 hover:underline">
                     Consultar
-                  </a>
+                  </RouterLink>
                 </div>
               </div>
             </div>
@@ -368,8 +400,15 @@
 
 <script lang="ts" setup>
 import MainLayout from '@/layouts/MainLayout.vue';
+import expertStore from '@/stores/expert';
 
 
+
+const setUserStore = (expertName: string, expertArea: string, expertUid?: string) => {
+  expertStore().setExpertName(expertName);
+  expertStore().setExpertArea(expertArea);
+  if (expertUid) expertStore().setExpertUid(expertUid);
+}
 </script>
 
 <style scoped></style>

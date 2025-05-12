@@ -81,6 +81,7 @@ import 'notivue/animations.css' // Only needed if using default animations
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import { createNotivue } from 'notivue'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 const notivue = createNotivue()
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -101,10 +102,11 @@ const firebaseConfig = {
 // Initialize Firebase
 const appFirebase = initializeApp(firebaseConfig)
 const analytics = getAnalytics(appFirebase)
-
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 const app = createApp(App)
 app.component('v-icon', OhVueIcon)
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(notivue)
 app.mount('#app')

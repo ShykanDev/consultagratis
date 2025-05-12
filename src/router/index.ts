@@ -42,7 +42,7 @@ const router = createRouter({
       meta: { requiresAuth: false },
     },
     {
-      path: '/expertoInfo',
+      path: '/expert/:name',
       name: 'expertInfo',
       component: () => import('../views/ExpertInfoView.vue'),
       meta: { requiresAuth: false },
