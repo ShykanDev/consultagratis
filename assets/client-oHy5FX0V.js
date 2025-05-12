@@ -1,1 +1,0 @@
-import{m as t}from"./index-D-Vn23KF.js";const n=t("client",{state:()=>({clientName:"",clientUid:""}),actions:{setClientName(e){this.clientName=e},setClientUid(e){this.clientUid=e}},getters:{getClientName:e=>e.clientName,getClientUid:e=>e.clientUid}});export{n as c};
