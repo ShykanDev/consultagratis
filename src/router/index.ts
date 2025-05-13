@@ -77,6 +77,12 @@ const router = createRouter({
       component: () => import('../views/ExpertUpcomingAlerts.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/expert',
+      name: 'expert',
+      component: () => import('../views/ExpertView.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     return { top: 0, behavior: 'smooth' }

@@ -112,7 +112,13 @@ import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
 import { createNotivue } from 'notivue'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-const notivue = createNotivue()
+const notivue = createNotivue({
+  notifications: {
+    global: {
+      duration: 5000, // Duración en milisegundos (5 segundos)
+    },
+  },
+})
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries

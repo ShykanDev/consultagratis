@@ -11,7 +11,7 @@
             <div class="text-center texto-site-ayuda">
               <h2 class="mb-4 text-3xl font-bold text-gray-800">Sección de Ayuda</h2>
               <p class="text-gray-600">Si no encuentras la solución a tu duda puedes ponerte en contacto con nosotros
-                <RouterLink to="./contacto" class="text-blue-600 underline enlace hover:text-blue-800">aquí</RouterLink>
+                <RouterLink to="/contacto" class="text-blue-600 underline enlace hover:text-blue-800">aquí</RouterLink>
               </p>
             </div>
           </div>
@@ -137,8 +137,8 @@
                 </label>
                 <div class="pl-4 mt-2 border-l-4 border-gray-300 spoiler">
                   <p class="text-gray-600">El experto tiene un horario especifico, en caso de querer realizar una
-                    contratación podrá enviarnos los datos desde la sección de <a
-                      class="text-blue-600 underline enlace hover:text-blue-800" href="./contacto.php">Contacto</a> con
+                    contratación podrá enviarnos los datos desde la sección de <RouterLink to="/contacto"
+                      class="text-blue-600 underline enlace hover:text-blue-800">Contacto</RouterLink> con
                     la opción de motivo "Contratar"</p>
                 </div>
               </div>
@@ -163,8 +163,9 @@
                 </label>
                 <div class="pl-4 mt-2 border-l-4 border-gray-300 spoiler">
                   <p class="text-gray-600">Para reclamar o realizar quejas, sugerencias o comentarios hacia cualquiera
-                    de nuestros expertos podrá realizarlos desde nuestro formulario de <a
-                      class="text-blue-600 underline enlace hover:text-blue-800" href="./contacto.php">Contacto</a></p>
+                    de nuestros expertos podrá realizarlos desde nuestro formulario de <RouterLink to="/contacto"
+                      class="text-blue-600 underline enlace hover:text-blue-800">Contacto</RouterLink>
+                  </p>
                 </div>
               </div>
 

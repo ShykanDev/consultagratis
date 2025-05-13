@@ -1,6 +1,8 @@
 <template>
   <MainLayout>
     <template #main>
+
+
       <div class="flex justify-center items-center px-4 min-h-screen bg-gradient-to-br from-gray-100 to-white">
         <form @submit.prevent="login"
           class="px-8 py-10 space-y-6 w-full max-w-4xl bg-white rounded-2xl border border-gray-100 shadow-lg">
@@ -66,6 +68,10 @@ import authStore from '@/stores/auth';
 import clientStore from '@/stores/client';
 import systemStore from '@/stores/system';
 import RestoreAccount from '@/components/Login/RestoreAccount.vue';
+import { usersLogin } from '@/stores/usersLogin';
+import expertStore from '@/stores/expert';
+import { push } from 'notivue';
+import { Notivue, Notification, NotificationProgress } from 'notivue'
 
 const router = useRouter();
 const email = ref('');
@@ -74,18 +80,30 @@ const password = ref('');
 
 const auth = getAuth();
 const login = async () => {
+  const notification = push.promise("Iniciando sesión, por favor espera...")
   try {
     const user = await signInWithEmailAndPassword(auth, email.value, password.value);
     if (user && user.user && user.user.email) {
-      console.log(user);
       authStore().setIsAuth(true)
-      clientStore().setClientUid(user.user.uid)
       //setting user email to pinia
       systemStore().setUserEmail(user.user.email)
-      router.push({ name: 'user' });
+
+      if (usersLogin().expertIncluded(user.user.email)) {
+        expertStore().setExpertUid(user.user.uid)
+        usersLogin().setIsExpert(true) //Setting expert to true if user.email is included in the experts list
+        router.push({ name: 'expert' });
+      }
+      if (!usersLogin().expertIncluded(user.user.email)) {
+        clientStore().setClientUid(user.user.uid)
+        usersLogin().setIsClient(true) //Setting client to true if user.email is not included in the experts list
+        router.push({ name: 'user' });
+      }
     }
+    notification.resolve('Inicio de sesión exitoso')
   } catch (error) {
-    console.log(error);
+    notification.reject(
+      'Error al iniciar sesión: ' + error
+    )
   }
 }
 </script>
