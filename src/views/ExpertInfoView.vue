@@ -170,7 +170,7 @@
 
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, } from 'vue';
+import { computed, onMounted, } from 'vue';
 import MainLayout from '@/layouts/MainLayout.vue';
 
 
@@ -293,11 +293,9 @@ const isAvailable = computed(() => {
 // Computed para el ícono del área
 const areaIcon = computed(() => 'fas fa-dollar-sign');
 
-import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { addDoc, collection, doc, getDocs, getFirestore, Timestamp, updateDoc } from 'firebase/firestore';
 import DateSquare from '@/components/ExpertoInfoView/DateSquare.vue';
-import AnimationLoadingCircle from '@/animations/AnimationLoadingCircle.vue';
 import clientStore from '@/stores/client';
 import authStore from '@/stores/auth';
 import type { IFutureAppointment } from '@/interfaces/IFutureAppointment';
@@ -402,9 +400,11 @@ const getDates = async () => {
     const querySnapshot = await getDocs(collectionDates);
     const doc = querySnapshot.docs[0];
     if (!doc) throw new Error('No se encontró ningún documento en collectionDates');
+    console.log('Getting dates from Firebase');
 
+    console.log(doc.data());
     const data = doc.data() as IDateRoot;
-    console.log(data);
+
 
     if (!Array.isArray(data.weeklySchedule)) throw new Error('weeklySchedule no es un array');
 
@@ -440,6 +440,7 @@ const getDates = async () => {
     availableTimeData.value = [{ ...data, weeklySchedule: updatedSchedule }];
     sysStore.setFirebaseData({ ...data, weeklySchedule: updatedSchedule })
     isLoading.value = false
+    console.log(availableTimeData.value)
   } catch (error) {
     console.error('Error fetching dates:', error);
     isLoading.value = false
@@ -453,6 +454,7 @@ onMounted(() => {
 /*
 addDoc(collectionMockExperts, {
     availableForAppointment: false,
+    userUid:'expert_1'
     weeklySchedule:[
       {
         dayInfo:{
@@ -619,7 +621,6 @@ const getClientAppointments = async () => {
           userHasScheduled.value = true;
         }
       }
-
     }
   } catch (error) {
     console.log(`Error getting client appointments: ${error}`);

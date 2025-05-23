@@ -19,7 +19,7 @@
             'border-gray-200 bg-gray-50 hover:bg-blue-50 hover:border-blue-200': !hoursTaken.includes(hour) && !(hour === userHourSelection && dayInfo.day === userDateSelection),
 
             // Hora no disponible
-            'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed': hoursTaken.includes(hour),
+            'border-gray-300 bg-gray-200 text-gray-400 cursor-not-allowed': hoursTaken.includes(hour),
 
             // Hora seleccionada
             'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-blue-600 shadow-md': hour === userHourSelection && dayInfo.day === userDateSelection,
